@@ -1,0 +1,122 @@
+@import "tailwindcss";
+
+:root {
+  --background: #05070c;
+  --foreground: #f3f4f6;
+  --eco-emerald: #10b981;
+  --eco-glow: #06b6d4;
+  --card-bg: rgba(13, 20, 35, 0.45);
+  --card-border: rgba(255, 255, 255, 0.08);
+}
+
+.light {
+  --background: #f8fafc;
+  --foreground: #0f172a;
+  --eco-emerald: #059669;
+  --eco-glow: #0891b2;
+  --card-bg: rgba(255, 255, 255, 0.7);
+  --card-border: rgba(15, 23, 42, 0.08);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-eco-emerald: var(--eco-emerald);
+  --color-eco-glow: var(--eco-glow);
+  --color-card: var(--card-bg);
+  --color-card-border: var(--card-border);
+  
+  --animate-marquee: marquee 30s linear infinite;
+  --animate-pulse-slow: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-glow: glow 2s ease-in-out infinite alternate;
+
+  @keyframes marquee {
+    0% { transform: translateX(0%); }
+    100% { transform: translateX(-50%); }
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+  }
+  @keyframes glow {
+    from {
+      text-shadow: 0 0 10px rgba(16, 185, 129, 0.2), 0 0 20px rgba(16, 185, 129, 0.2);
+    }
+    to {
+      text-shadow: 0 0 20px rgba(16, 185, 129, 0.6), 0 0 30px rgba(16, 185, 129, 0.4);
+    }
+  }
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Glassmorphism Styles */
+.glassmorphism {
+  background: var(--card-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--card-border);
+}
+
+.glassmorphism-hover {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glassmorphism-hover:hover {
+  transform: translateY(-4px) scale(1.01);
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5), 0 0 25px -5px rgba(16, 185, 129, 0.15);
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+.light .glassmorphism-hover:hover {
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.05), 0 0 25px -5px rgba(5, 150, 105, 0.1);
+  border-color: rgba(5, 150, 105, 0.3);
+}
+
+/* Advanced Eco Tech Grid background */
+.eco-grid {
+  background-size: 40px 40px;
+  background-image: 
+    linear-gradient(to right, rgba(16, 185, 129, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(16, 185, 129, 0.04) 1px, transparent 1px);
+}
+
+.light .eco-grid {
+  background-image: 
+    linear-gradient(to right, rgba(5, 150, 105, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(5, 150, 105, 0.03) 1px, transparent 1px);
+}
+
+/* Masking for Marquee to fade edges */
+.mask-marquee {
+  mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+}
+
+/* Custom premium scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(16, 185, 129, 0.3);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(16, 185, 129, 0.6);
+}
