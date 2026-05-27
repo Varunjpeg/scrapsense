@@ -19,48 +19,43 @@ export default function MapPreview({
   userLocationInput = "New Delhi, Delhi",
   typeLabel = "Dealers"
 }: MapPreviewProps) {
-  const [radarScanning, setRadarScanning] = useState(true);
+  const [radarScanning, setRadarScanning] = useState(false); // default to false for Stripe-like minimal layout
 
-  // Generate deterministic coordinates on a grid for the interactive map
   const getCoordinates = (id: string) => {
-    // Return mock coordinates mapped to a 0-100 grid for premium visual display
-    if (id.includes("1")) return { x: 35, y: 45 };
-    if (id.includes("2")) return { x: 65, y: 30 };
-    if (id.includes("3")) return { x: 45, y: 70 };
-    if (id.includes("4")) return { x: 80, y: 65 };
+    if (id.includes("1") || id.includes("dl_1")) return { x: 35, y: 45 };
+    if (id.includes("2") || id.includes("dl_2")) return { x: 65, y: 30 };
+    if (id.includes("3") || id.includes("rf_1")) return { x: 45, y: 70 };
     return { x: 50, y: 50 };
   };
 
   return (
-    <div className="flex flex-col lg:flex-row gap-6 w-full max-w-6xl mx-auto p-4">
-      {/* Dynamic Eco-Map Grid */}
-      <div className="flex-1 glassmorphism rounded-3xl p-6 relative overflow-hidden h-[420px] lg:h-[500px] flex flex-col justify-between">
-        {/* Neon Tech Grid Overlay */}
-        <div className="absolute inset-0 eco-grid pointer-events-none opacity-40" />
+    <div className="flex flex-col lg:flex-row gap-5 w-full max-w-6xl mx-auto">
+      {/* Dynamic Coordinate Radar Map */}
+      <div className="flex-1 glassmorphism rounded-xl p-4.5 relative overflow-hidden h-[380px] lg:h-[450px] flex flex-col justify-between bg-card">
+        <div className="absolute inset-0 eco-grid pointer-events-none opacity-20" />
         
         {/* Radar Circular Scan Effect */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden">
-          <div className="w-[500px] h-[500px] rounded-full border border-emerald-500/10 flex items-center justify-center relative animate-pulse-slow">
-            <div className="w-[350px] h-[350px] rounded-full border border-emerald-500/15 flex items-center justify-center">
-              <div className="w-[200px] h-[200px] rounded-full border border-emerald-500/20" />
+          <div className="w-[400px] h-[400px] rounded-full border border-card-border flex items-center justify-center relative">
+            <div className="w-[280px] h-[280px] rounded-full border border-card-border flex items-center justify-center">
+              <div className="w-[150px] h-[150px] rounded-full border border-card-border" />
             </div>
-            {/* Rotating Scan Line */}
             {radarScanning && (
-              <div className="absolute inset-0 rounded-full bg-[conic-gradient(from_0deg,rgba(16,185,129,0.1),transparent_40%)] animate-[spin_8s_linear_infinite]" />
+              <div className="absolute inset-0 rounded-full bg-[conic-gradient(from_0deg,rgba(16,185,129,0.05),transparent_40%)] animate-[spin_8s_linear_infinite]" />
             )}
           </div>
         </div>
 
-        {/* User Marker (Center) */}
+        {/* User Location Node */}
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 flex flex-col items-center select-none">
-          <div className="w-5 h-5 rounded-full bg-cyan-400 flex items-center justify-center animate-ping absolute" />
-          <div className="w-4 h-4 rounded-full bg-cyan-500 border-2 border-white flex items-center justify-center shadow-lg shadow-cyan-500/30 z-10" />
-          <div className="bg-slate-900/90 text-cyan-400 text-[10px] font-bold px-2 py-0.5 rounded-full border border-cyan-500/20 mt-1 shadow-md backdrop-blur-sm whitespace-nowrap">
+          <div className="w-3.5 h-3.5 rounded-full bg-cyan-500/20 flex items-center justify-center animate-ping absolute" />
+          <div className="w-3 h-3 rounded-full bg-cyan-500 border border-white flex items-center justify-center z-10" />
+          <div className="bg-card text-cyan-500 text-[9px] font-bold px-2 py-0.5 rounded-full border border-cyan-500/30 mt-1 shadow whitespace-nowrap">
             You ({userLocationInput || "Delhi"})
           </div>
         </div>
 
-        {/* Recycler / Dealer Nodes */}
+        {/* Recycler / Dealer Pin Nodes */}
         {locations.map((loc) => {
           const coords = getCoordinates(loc.id);
           const isSelected = selectedLocation?.id === loc.id;
@@ -70,30 +65,21 @@ export default function MapPreview({
               key={loc.id}
               onClick={() => onSelectLocation(loc)}
               style={{ left: `${coords.x}%`, top: `${coords.y}%` }}
-              className="absolute -translate-x-1/2 -translate-y-1/2 z-20 group focus:outline-none transition-all duration-300"
+              className="absolute -translate-x-1/2 -translate-y-1/2 z-20 group focus:outline-none transition-all duration-200"
             >
               <div className="relative flex flex-col items-center">
-                {/* Ping Glow for selected/hovered item */}
-                <div 
-                  className={`w-7 h-7 rounded-full bg-emerald-400 flex items-center justify-center animate-ping absolute transition-opacity duration-300 ${
-                    isSelected ? "opacity-100" : "opacity-0 group-hover:opacity-40"
-                  }`} 
-                />
-                
-                {/* Pin Icon */}
-                <div className={`p-2 rounded-xl transition-all duration-300 border shadow-lg ${
+                <div className={`p-1.5 rounded-lg transition-all duration-200 border shadow ${
                   isSelected 
-                    ? "bg-emerald-500 text-slate-950 border-white scale-110 shadow-emerald-500/35" 
-                    : "bg-slate-900 text-emerald-400 border-emerald-500/30 group-hover:bg-emerald-950 group-hover:border-emerald-400 group-hover:scale-105"
+                    ? "bg-emerald-500 text-slate-950 border-white scale-105" 
+                    : "bg-card text-emerald-500 border-card-border group-hover:border-emerald-500/50 group-hover:scale-102"
                 }`}>
-                  <MapPin className="w-4 h-4" />
+                  <MapPin className="w-3.5 h-3.5" />
                 </div>
                 
-                {/* Brief floating label */}
-                <div className={`mt-1.5 px-2 py-0.5 rounded-md text-[9px] font-bold border transition-all duration-300 whitespace-nowrap backdrop-blur-sm ${
+                <div className={`mt-1.5 px-2 py-0.5 rounded text-[8px] font-bold border transition-all duration-200 whitespace-nowrap ${
                   isSelected
-                    ? "bg-emerald-500 text-slate-950 border-white font-extrabold"
-                    : "bg-slate-900/90 text-gray-300 border-white/5 group-hover:text-emerald-400 group-hover:border-emerald-500/20"
+                    ? "bg-emerald-500 text-slate-950 border-white"
+                    : "bg-card text-foreground border-card-border group-hover:text-emerald-500"
                 }`}>
                   {loc.businessName} ({loc.distance})
                 </div>
@@ -104,85 +90,79 @@ export default function MapPreview({
 
         {/* Header Controls */}
         <div className="z-10 flex items-center justify-between w-full">
-          <div className="flex items-center gap-2 bg-slate-950/80 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/5 text-[11px] font-bold text-gray-300">
-            <Compass className="w-3.5 h-3.5 text-emerald-400 animate-spin-slow" />
-            <span>Interactive Eco-Radar Active</span>
+          <div className="flex items-center gap-1.5 bg-background px-3 py-1 rounded-full border border-card-border text-[9px] font-bold text-muted-text">
+            <Compass className="w-3 h-3 text-emerald-500" />
+            <span>Eco-Radar Grid Active</span>
           </div>
           <button 
             onClick={() => setRadarScanning(!radarScanning)}
-            className={`px-3 py-1 rounded-full text-[10px] font-bold border transition-all duration-300 ${
+            className={`px-3 py-1 rounded-full text-[9px] font-bold border transition-all ${
               radarScanning 
-                ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30" 
-                : "bg-slate-900 text-gray-400 border-white/5 hover:bg-slate-800"
+                ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/30" 
+                : "bg-background text-muted-text border-card-border hover:bg-muted-border"
             }`}
           >
             {radarScanning ? "Pause Scan" : "Start Scan"}
           </button>
         </div>
 
-        {/* Map coordinates watermarks */}
-        <div className="z-10 flex justify-between items-end w-full text-[9px] font-mono text-gray-500 select-none pointer-events-none">
+        {/* Coordinates labels */}
+        <div className="z-10 flex justify-between items-end w-full text-[8px] font-mono text-muted-text select-none pointer-events-none">
           <span>LAT: 28.6139° N / LONG: 77.2090° E</span>
-          <span>GRID ZOOM: 100x RANGE: 5.0 KM</span>
+          <span>GRID RANGE: 5.0 KM</span>
         </div>
       </div>
 
-      {/* Selected Location Card Display */}
-      <div className="w-full lg:w-80 flex flex-col justify-center">
+      {/* Selected Location Details Panel */}
+      <div className="w-full lg:w-76 flex flex-col justify-center shrink-0">
         {selectedLocation ? (
-          <div className="glassmorphism rounded-3xl p-6 border border-emerald-500/20 shadow-xl shadow-emerald-950/20 animate-in fade-in slide-in-from-bottom-5 duration-300">
+          <div className="glassmorphism rounded-xl p-5 border border-card-border bg-card shadow animate-in fade-in duration-200">
             <div className="flex justify-between items-start">
               <div>
-                <span className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider">
-                  Verified Recycler
+                <span className="bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 text-[8px] font-extrabold px-2 py-0.5 rounded uppercase tracking-wider">
+                  Verified Partner
                 </span>
-                <h3 className="text-xl font-bold text-white mt-2 leading-tight">
+                <h3 className="text-base font-bold text-foreground mt-2 leading-tight">
                   {selectedLocation.businessName}
                 </h3>
               </div>
-              <div className="flex items-center gap-1 bg-amber-400/10 text-amber-400 px-2 py-0.5 rounded-lg border border-amber-400/20 text-xs font-bold">
-                <Star className="w-3.5 h-3.5 fill-current" />
+              <div className="flex items-center gap-0.5 bg-amber-400/10 text-amber-500 px-1.5 py-0.5 rounded text-[10px] font-bold border border-amber-400/20">
+                <Star className="w-3 h-3 fill-current" />
                 <span>{selectedLocation.ratings}</span>
               </div>
             </div>
 
-            <div className="mt-4 space-y-2.5 text-sm text-gray-300 border-y border-white/5 py-4">
+            <div className="mt-3.5 space-y-2 text-xs text-foreground border-y border-card-border py-3">
               <div className="flex items-start gap-2">
-                <Navigation className="w-4 h-4 text-emerald-400 mt-0.5 shrink-0" />
+                <Navigation className="w-3.5 h-3.5 text-emerald-500 mt-0.5 shrink-0" />
                 <div>
-                  <div className="font-semibold text-gray-200">{selectedLocation.distance} away</div>
-                  <div className="text-xs text-gray-400 mt-0.5">{selectedLocation.address}</div>
+                  <div className="font-bold text-foreground">{selectedLocation.distance} away</div>
+                  <div className="text-[10px] text-muted-text mt-0.5 leading-normal">{selectedLocation.address}</div>
                 </div>
               </div>
 
               <div className="flex items-center gap-2">
-                <CheckCircle className="w-4 h-4 text-emerald-400 shrink-0" />
-                <span className="text-xs text-emerald-400 font-semibold">{selectedLocation.licenseNumber}</span>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <Phone className="w-4 h-4 text-emerald-400 shrink-0" />
-                <span className="text-xs text-gray-300">{selectedLocation.phone}</span>
+                <CheckCircle className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                <span className="text-[10px] text-emerald-500 font-bold font-mono">{selectedLocation.licenseNumber}</span>
               </div>
             </div>
 
-            {/* Specialties */}
-            <div className="mt-4">
-              <div className="text-xs font-bold text-gray-400 uppercase tracking-wide">Specialist Services</div>
-              <div className="flex flex-wrap gap-1.5 mt-2">
-                {selectedLocation.services.slice(0, 3).map((serv, index) => (
-                  <span key={index} className="text-[10px] bg-slate-900 border border-white/5 text-gray-300 px-2 py-1 rounded-md">
+            <div className="mt-3">
+              <div className="text-[9px] font-bold text-muted-text uppercase tracking-wider">Specialties</div>
+              <div className="flex flex-wrap gap-1 mt-1.5">
+                {selectedLocation.services.slice(0, 2).map((serv, index) => (
+                  <span key={index} className="text-[9px] bg-background border border-card-border text-foreground px-2 py-0.5 rounded">
                     {serv}
                   </span>
                 ))}
               </div>
             </div>
 
-            {/* Interactive Actions */}
-            <div className="grid grid-cols-2 gap-3 mt-6">
+            {/* Actions */}
+            <div className="grid grid-cols-2 gap-2 mt-4.5">
               <a
                 href={`tel:${selectedLocation.phone}`}
-                className="flex items-center justify-center gap-2 py-2.5 rounded-xl border border-white/10 hover:border-emerald-500/30 text-xs font-bold text-white transition-colors bg-white/5 hover:bg-emerald-500/10"
+                className="flex items-center justify-center gap-1 py-2 rounded-lg border border-card-border hover:border-emerald-500/20 text-[10px] font-bold text-foreground transition-all bg-background hover:bg-emerald-500/5 text-center"
               >
                 <Phone className="w-3.5 h-3.5" />
                 <span>Call Shop</span>
@@ -191,21 +171,18 @@ export default function MapPreview({
                 href={`https://wa.me/${selectedLocation.phone.replace(/[^0-9]/g, "")}?text=Hi,%20I%20am%20interested%20in%20recycling%20my%20e-waste%20with%20ScrapSense.`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-xs font-bold text-slate-950 transition-colors shadow-lg shadow-emerald-500/25"
+                className="flex items-center justify-center gap-1 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-[10px] font-black text-slate-950 transition-all text-center"
               >
-                <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
-                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.746.953 3.71 1.456 5.705 1.457h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413" />
-                </svg>
                 <span>WhatsApp</span>
               </a>
             </div>
           </div>
         ) : (
-          <div className="glassmorphism rounded-3xl p-8 border border-white/5 text-center flex flex-col items-center justify-center h-full min-h-[250px]">
-            <Navigation className="w-10 h-10 text-emerald-500/40 animate-bounce mb-3" />
-            <h3 className="text-lg font-bold text-white leading-snug">Select a Recycler</h3>
-            <p className="text-xs text-gray-400 mt-1 max-w-[200px] mx-auto">
-              Click any verified radar node on the map grid to view direct contact details, specialties, and distance calculations.
+          <div className="glassmorphism rounded-xl p-6 border border-card-border bg-card text-center flex flex-col items-center justify-center min-h-[220px]">
+            <Navigation className="w-8 h-8 text-emerald-500/30 animate-bounce mb-3" />
+            <h3 className="text-xs font-bold text-foreground">Select a Recycler</h3>
+            <p className="text-[10px] text-muted-text mt-1 max-w-[180px] leading-normal">
+              Click any coordinate pin on the radar map to view ratings and call webhooks.
             </p>
           </div>
         )}

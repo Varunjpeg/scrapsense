@@ -1,9 +1,7 @@
 "use client";
 
 import React from "react";
-import { 
-  TrendingUp, Inbox, Archive, CheckCircle, Award, Leaf, Compass, Star, DollarSign
-} from "lucide-react";
+import { TrendingUp, Inbox, Archive, Award, DollarSign, Leaf } from "lucide-react";
 import { useApp } from "@/context/AppContext";
 
 export default function RecyclerDashboard() {
@@ -19,160 +17,155 @@ export default function RecyclerDashboard() {
     { month: "Feb", rev: 68000 },
     { month: "Mar", rev: 89000 },
     { month: "Apr", rev: 72000 },
-    { month: "May", rev: totalEarnings + 35000 }, // Dynamically syncs with collected e-waste!
+    { month: "May", rev: totalEarnings + 18000 }, // dynamically calculated
   ];
 
   // Maximum value for SVG scaling
   const maxRevenue = Math.max(...monthlyRevenue.map(m => m.rev));
 
   return (
-    <div className="space-y-8 max-w-6xl mx-auto">
+    <div className="space-y-6 max-w-5xl mx-auto text-left">
       
       {/* Slogan banner */}
-      <div className="glassmorphism rounded-3xl p-6.5 border border-emerald-500/20 bg-gradient-to-r from-slate-950 via-emerald-950/20 to-slate-950 relative overflow-hidden flex flex-col sm:flex-row justify-between items-center gap-6 shadow-xl">
-        <div className="absolute inset-0 eco-grid pointer-events-none opacity-25" />
+      <div className="glassmorphism rounded-xl p-5.5 border border-card-border bg-card relative overflow-hidden flex flex-col sm:flex-row justify-between items-center gap-5 shadow-sm">
+        <div className="absolute inset-0 eco-grid pointer-events-none opacity-20" />
         
-        <div className="relative z-10 space-y-2 text-center sm:text-left">
-          <span className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[9px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+        <div className="relative z-10 space-y-1.5 text-center sm:text-left">
+          <span className="bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 text-[9px] font-bold px-2 py-0.5 rounded font-mono uppercase">
             Partner Workspace
           </span>
-          <h2 className="text-2xl sm:text-3xl font-black text-white mt-2 leading-none">
+          <h2 className="text-xl sm:text-2xl font-black text-foreground mt-2 leading-none">
             {recycler?.businessName} Operations
           </h2>
-          <p className="text-xs text-gray-400 leading-relaxed pt-1">
-            Running certified diagnostics under e-waste Board License <span className="text-emerald-400 font-bold">{recycler?.licenseNumber}</span>.
+          <p className="text-xs text-muted-text leading-relaxed">
+            CPCB Authorized diagnostics under e-waste Board License <span className="text-emerald-500 font-bold font-mono text-[11px]">{recycler?.licenseNumber}</span>.
           </p>
         </div>
 
-        <div className="glassmorphism bg-slate-950/80 rounded-2xl p-4.5 border border-white/5 flex items-center gap-4 text-left shrink-0 z-10 w-full sm:w-auto">
-          <div className="p-3.5 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 animate-pulse">
-            <TrendingUp className="w-6 h-6" />
+        <div className="glassmorphism bg-background rounded-xl p-4 border border-card-border flex items-center gap-3.5 text-left shrink-0 z-10 w-full sm:w-auto shadow-inner">
+          <div className="p-2.5 rounded-lg bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 animate-pulse">
+            <TrendingUp className="w-5 h-5" />
           </div>
           <div>
-            <div className="text-xs text-gray-500 font-bold uppercase tracking-wider">Monthly Payouts</div>
-            <div className="text-base font-extrabold text-white">₹{totalEarnings.toLocaleString()}</div>
-            <p className="text-[10px] text-gray-400 font-medium mt-0.5">{totalCollected.length} successful items processed</p>
+            <div className="text-[9px] text-muted-text font-bold uppercase tracking-wider font-mono">Monthly cleared worth</div>
+            <div className="text-sm font-extrabold text-foreground mt-0.5">₹{totalEarnings.toLocaleString()}</div>
+            <p className="text-[10px] text-muted-text font-medium mt-0.5">{totalCollected.length} successful items processed</p>
           </div>
         </div>
       </div>
 
-      {/* CORE FOUR-METRIC CARDS GRID */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      {/* FOUR-METRIC CARDS GRID */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         
-        <div className="glassmorphism rounded-2xl p-5 border border-white/5">
+        <div className="glassmorphism rounded-xl p-4.5 border border-card-border bg-card">
           <div className="flex justify-between items-start">
             <div>
-              <div className="text-xs text-gray-500 font-bold uppercase tracking-wider">Pending Pickups</div>
-              <div className="text-2xl font-black text-white mt-2">{pendingOrders.length}</div>
+              <div className="text-[10px] text-muted-text font-bold uppercase tracking-wider font-mono">Pending Pickups</div>
+              <div className="text-xl font-black text-foreground mt-1.5">{pendingOrders.length}</div>
             </div>
-            <div className="p-2.5 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400">
+            <div className="p-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-500">
               <Inbox className="w-5 h-5" />
             </div>
           </div>
-          <p className="text-[10px] text-cyan-400 font-semibold mt-4">Bookings awaiting action</p>
+          <p className="text-[9px] text-muted-text font-bold uppercase mt-3.5">Bookings awaiting action</p>
         </div>
 
-        <div className="glassmorphism rounded-2xl p-5 border border-white/5">
+        <div className="glassmorphism rounded-xl p-4.5 border border-card-border bg-card">
           <div className="flex justify-between items-start">
             <div>
-              <div className="text-xs text-gray-500 font-bold uppercase tracking-wider">Processed Inventory</div>
-              <div className="text-2xl font-black text-white mt-2">{totalCollected.length}</div>
+              <div className="text-[10px] text-muted-text font-bold uppercase tracking-wider font-mono">Cleared ledger</div>
+              <div className="text-xl font-black text-foreground mt-1.5">{totalCollected.length}</div>
             </div>
-            <div className="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
+            <div className="p-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-500">
               <Archive className="w-5 h-5" />
             </div>
           </div>
-          <p className="text-[10px] text-emerald-400 font-semibold mt-4">Total collections cleared</p>
+          <p className="text-[9px] text-muted-text font-bold uppercase mt-3.5">Total collections processed</p>
         </div>
 
-        <div className="glassmorphism rounded-2xl p-5 border border-white/5">
+        <div className="glassmorphism rounded-xl p-4.5 border border-card-border bg-card">
           <div className="flex justify-between items-start">
             <div>
-              <div className="text-xs text-gray-500 font-bold uppercase tracking-wider">Total Revenue</div>
-              <div className="text-2xl font-black text-white mt-2">₹{totalEarnings.toLocaleString()}</div>
+              <div className="text-[10px] text-muted-text font-bold uppercase tracking-wider font-mono">Total Revenue</div>
+              <div className="text-xl font-black text-foreground mt-1.5">₹{totalEarnings.toLocaleString()}</div>
             </div>
-            <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400">
+            <div className="p-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-500">
               <DollarSign className="w-5 h-5" />
             </div>
           </div>
-          <p className="text-[10px] text-amber-400 font-semibold mt-4">Lifetime payout values</p>
+          <p className="text-[9px] text-muted-text font-bold uppercase mt-3.5">Lifetime cleared worth</p>
         </div>
 
-        <div className="glassmorphism rounded-2xl p-5 border border-white/5">
+        <div className="glassmorphism rounded-xl p-4.5 border border-card-border bg-card">
           <div className="flex justify-between items-start">
             <div>
-              <div className="text-xs text-gray-500 font-bold uppercase tracking-wider">Collector Level</div>
-              <div className="text-2xl font-black text-white mt-2">{recycler?.points} PTS</div>
+              <div className="text-[10px] text-muted-text font-bold uppercase tracking-wider font-mono">Partner points</div>
+              <div className="text-xl font-black text-foreground mt-1.5">{recycler?.points} PTS</div>
             </div>
-            <div className="p-2.5 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400">
+            <div className="p-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-500">
               <Award className="w-5 h-5" />
             </div>
           </div>
-          <p className="text-[10px] text-indigo-400 font-semibold mt-4">Level +3 Points per collection</p>
+          <p className="text-[9px] text-muted-text font-bold uppercase mt-3.5">Level +3 PTS per pickup</p>
         </div>
 
       </div>
 
-      {/* GRAPHICS & HEATMAP ANALYSIS */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      {/* GRAPHICS & HEATMAP */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6.5">
         
         {/* Custom SVG Revenue Bar Chart */}
-        <div className="lg:col-span-2 glassmorphism rounded-3xl p-6 border border-white/5 bg-slate-950/20 relative">
+        <div className="lg:col-span-2 glassmorphism rounded-xl p-5 border border-card-border bg-card relative">
           <div className="absolute inset-0 eco-grid pointer-events-none opacity-20" />
-          <h3 className="text-sm font-black text-white uppercase tracking-wider relative z-10 mb-8">E-waste Revenue Growth (2026)</h3>
+          <h3 className="text-xs font-black text-foreground uppercase tracking-wider font-mono relative z-10 mb-6">E-waste Revenue Growth (2026)</h3>
           
-          {/* Custom SVG */}
-          <div className="relative z-10 h-64 flex items-end justify-between px-4 pb-8 pt-4">
+          <div className="relative z-10 h-56 flex items-end justify-between px-3 pb-8 pt-3 border-b border-card-border">
             {monthlyRevenue.map((item, index) => {
-              // Calculate percentage height
-              const heightPct = (item.rev / maxRevenue) * 80; // max height is 80% of chart
+              const heightPct = (item.rev / maxRevenue) * 80; // max height 80%
               return (
-                <div key={index} className="flex flex-col items-center gap-3 w-1/5 group">
-                  
-                  {/* Glowing value tooltip */}
-                  <div className="text-[9px] font-mono text-emerald-400 opacity-0 group-hover:opacity-100 transition-opacity font-bold">
+                <div key={index} className="flex flex-col items-center gap-2.5 w-1/5 group">
+                  <div className="text-[9px] font-mono text-emerald-500 opacity-0 group-hover:opacity-100 transition-opacity font-bold">
                     ₹{item.rev.toLocaleString()}
                   </div>
 
-                  {/* Vertical bar */}
                   <div 
                     style={{ height: `${heightPct}%` }}
-                    className="w-8 rounded-t-xl bg-gradient-to-t from-slate-950 to-emerald-500 border border-emerald-500/20 hover:border-emerald-400 shadow-lg shadow-emerald-500/5 hover:shadow-emerald-500/15 hover:scale-102 transition-all duration-300 relative"
+                    className="w-7 rounded-t bg-gradient-to-t from-background to-emerald-500 border border-emerald-500/20 hover:border-emerald-500/50 shadow-sm transition-all duration-300 relative"
                   />
                   
-                  <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">{item.month}</span>
+                  <span className="text-[9px] text-muted-text font-bold uppercase tracking-wider font-mono">{item.month}</span>
                 </div>
               );
             })}
           </div>
 
-          <div className="border-t border-white/5 mt-4 pt-4 flex justify-between text-[9px] text-gray-500 font-mono">
-            <span>YTD METRICS: Syncing live collections</span>
-            <span>GRID SCALE: Linear auto-zoom</span>
+          <div className="mt-3.5 flex justify-between text-[8px] text-muted-text font-mono font-bold uppercase">
+            <span>YTD METRICS: Syncing verified pickup totals</span>
+            <span>SCALE: Linear Auto-Zoom</span>
           </div>
         </div>
 
         {/* Region Collection Heatmap */}
-        <div className="glassmorphism rounded-3xl p-6 border border-white/5 bg-slate-950/20 flex flex-col justify-between">
+        <div className="glassmorphism rounded-xl p-5 border border-card-border bg-card flex flex-col justify-between h-[320px]">
           <div>
-            <h3 className="text-sm font-black text-white uppercase tracking-wider mb-4">Collection Heatmap</h3>
-            <p className="text-[10px] text-gray-400 leading-normal">
-              Live tracking e-waste dispatch rates in New Delhi regions.
+            <h3 className="text-xs font-black text-foreground uppercase tracking-wider font-mono mb-3">Collection Heatmap</h3>
+            <p className="text-[10px] text-muted-text leading-normal">
+              Diverting active e-waste densities inside Delhi zones.
             </p>
 
-            <div className="space-y-3 mt-6">
+            <div className="space-y-3.5 mt-5">
               {[
-                { name: "Okhla Phase 3", val: 82, color: "bg-emerald-500" },
-                { name: "Janakpuri West", val: 48, color: "bg-cyan-500" },
-                { name: "South Ext Part 2", val: 94, color: "bg-rose-500" },
-                { name: "Connaught Place", val: 65, color: "bg-amber-500" }
+                { name: "Okhla Industrial Area", val: 82, color: "bg-emerald-500" },
+                { name: "Janakpuri District Center", val: 48, color: "bg-emerald-500/50" },
+                { name: "South Ext Part II", val: 94, color: "bg-emerald-500" },
+                { name: "Connaught Place", val: 65, color: "bg-emerald-500/70" }
               ].map(reg => (
-                <div key={reg.name} className="space-y-1.5">
-                  <div className="flex justify-between text-[10px] font-bold text-gray-300">
+                <div key={reg.name} className="space-y-1">
+                  <div className="flex justify-between text-[10px] font-bold text-foreground font-mono uppercase">
                     <span>{reg.name}</span>
                     <span>{reg.val}% Density</span>
                   </div>
-                  <div className="w-full h-1.5 bg-slate-900 rounded-full overflow-hidden border border-white/5">
+                  <div className="w-full h-1 bg-background rounded-full overflow-hidden border border-card-border">
                     <div style={{ width: `${reg.val}%` }} className={`h-full rounded-full ${reg.color}`} />
                   </div>
                 </div>
@@ -180,8 +173,8 @@ export default function RecyclerDashboard() {
             </div>
           </div>
 
-          <div className="text-[9px] text-gray-500 font-mono text-center pt-4 border-t border-white/5 uppercase">
-            Map bounds: latitude coordinate grid Delhi
+          <div className="text-[8px] text-muted-text font-mono text-center pt-3 border-t border-card-border uppercase font-bold">
+            Delhi coordinate grid metrics
           </div>
         </div>
 
