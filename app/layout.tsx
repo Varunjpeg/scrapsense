@@ -17,6 +17,10 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "ScrapSense - Smart AI-Powered E-Waste Marketplace",
   description: "India's smartest AI-powered e-waste ecosystem. Get exact pricing for your device and schedule door-step pickups with certified recyclers.",
+
+  icons: {
+    icon: "/favicon.png",
+  },
 };
 
 export default function RootLayout({
