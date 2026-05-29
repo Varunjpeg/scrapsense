@@ -3,75 +3,121 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, ShieldCheck, Mail, Lock, User, Phone, MapPin, Award, RefreshCw, Leaf } from "lucide-react";
+import { 
+  ArrowLeft, ArrowRight, ShieldCheck, Mail, Lock, User, Phone, MapPin, 
+  Award, RefreshCw, Leaf, Calendar, CheckCircle2 
+} from "lucide-react";
 import { useApp } from "@/context/AppContext";
 
 export default function SignupPage() {
   const router = useRouter();
-  const { signupUser, signupRecycler } = useApp();
+  const { signupSendOtp, signupVerifyOtp, signupComplete } = useApp();
 
-  const [role, setRole] = useState<"user" | "recycler">("user");
+  const [signupStep, setSignupStep] = useState<1 | 2 | 3>(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [successMsg, setSuccessMsg] = useState("");
 
-  // Common Fields
+  // OTP State Helper (so they can see the OTP directly in front of them on their screen during testing!)
+  const [consoleOtp, setConsoleOtp] = useState("");
+
+  // Form parameters
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [otp, setOtp] = useState("");
 
-  // User Field
+  // Info details
   const [name, setName] = useState("");
-
-  // Recycler Business Fields
-  const [businessName, setBusinessName] = useState("");
-  const [ownerName, setOwnerName] = useState("");
+  const [age, setAge] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
-  const [licenseNumber, setLicenseNumber] = useState("");
-  const [services, setServices] = useState<string[]>([]);
+  const [password, setPassword] = useState("");
+  const [role, setRole] = useState<"customer" | "recycler" | "refurbisher">("customer");
 
-  const handleServiceToggle = (service: string) => {
-    setServices(prev =>
-      prev.includes(service) ? prev.filter(s => s !== service) : [...prev, service]
-    );
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  // Step 1: Send OTP to email
+  const handleSendOtp = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !password) {
-      setError("Please fill in basic fields.");
+    if (!email) {
+      setError("Email address is required.");
       return;
     }
     setError("");
     setLoading(true);
 
     try {
-      if (role === "user") {
-        if (!name) {
-          setError("Name is required.");
-          setLoading(false);
-          return;
+      const res = await signupSendOtp(email);
+      if (res.success) {
+        setSuccessMsg("Verification code dispatched to your inbox.");
+        if (res.otp) {
+          setConsoleOtp(res.otp); // Save so we can display a clean helper card!
         }
-        await signupUser(name, email);
-        router.push("/user/dashboard");
+        setSignupStep(2);
       } else {
-        if (!businessName || !ownerName || !phone || !address || !licenseNumber) {
-          setError("All business details are required.");
-          setLoading(false);
-          return;
-        }
-        await signupRecycler(
-          businessName,
-          ownerName,
-          email,
-          phone,
-          address,
-          licenseNumber,
-          services
-        );
-        router.push("/recycler/dashboard");
+        setError(res.error || "Failed to dispatch verification code.");
       }
     } catch (err) {
-      setError("Signup failed. Please try again.");
+      setError("Network offline. Unable to dispatch OTP.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Step 2: Verify OTP
+  const handleVerifyOtp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!otp) {
+      setError("Please input the 6-digit verification code.");
+      return;
+    }
+    setError("");
+    setLoading(true);
+
+    try {
+      const res = await signupVerifyOtp(email, otp);
+      if (res.success) {
+        setSuccessMsg("Email successfully verified.");
+        setSignupStep(3);
+      } else {
+        setError(res.error || "Invalid or expired verification code.");
+      }
+    } catch (err) {
+      setError("Verification failed.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Step 3: Complete Sign Up
+  const handleCompleteSignup = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name || !age || !phone || !address || !password) {
+      setError("Please fill in all profile fields.");
+      return;
+    }
+    setError("");
+    setLoading(true);
+
+    try {
+      const res = await signupComplete({
+        name,
+        age: parseInt(age),
+        phone,
+        address,
+        email,
+        password,
+        role
+      });
+
+      if (res.success) {
+        if (role === "customer") {
+          router.push("/user/dashboard");
+        } else {
+          router.push("/recycler/dashboard");
+        }
+      } else {
+        setError(res.error || "Signup failed.");
+      }
+    } catch (err) {
+      setError("Failed to create profile. Verify connection is active.");
     } finally {
       setLoading(false);
     }
@@ -79,248 +125,277 @@ export default function SignupPage() {
 
   return (
     <div className="min-h-screen flex flex-col justify-center items-center px-4 py-12 relative overflow-hidden bg-background">
-      <div className="absolute inset-0 eco-grid pointer-events-none opacity-30" />
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-emerald-500/5 blur-3xl pointer-events-none" />
-      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full bg-cyan-500/5 blur-3xl pointer-events-none" />
+      <div className="absolute inset-0 eco-grid pointer-events-none opacity-40" />
 
-      {/* Back button */}
+      {/* Floating Back Button */}
       <Link 
         href="/"
-        className="absolute top-6 left-6 flex items-center gap-2 text-xs font-bold text-gray-400 hover:text-white transition-colors bg-white/5 border border-white/5 px-3.5 py-2 rounded-full backdrop-blur-sm"
+        className="absolute top-6 left-6 flex items-center gap-2 text-xs font-bold text-muted-text hover:text-foreground transition-colors bg-white border border-card-border px-4 py-2 rounded-full shadow-sm"
       >
         <ArrowLeft className="w-3.5 h-3.5" />
         <span>Return Home</span>
       </Link>
 
-      <div className="w-full max-w-xl relative z-10">
+      <div className="w-full max-w-md relative z-10">
         
         {/* Brand Header */}
         <div className="flex flex-col items-center mb-6">
-          <div className="p-3.5 rounded-2xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shadow-lg shadow-emerald-500/5 mb-3.5">
-            <Leaf className="w-7 h-7 animate-pulse" />
+          <div className="p-3.5 rounded-2xl bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 shadow-sm mb-3.5">
+            <Leaf className="w-7 h-7" />
           </div>
-          <h2 className="text-2xl font-black tracking-tight text-white">Create Your Account</h2>
-          <p className="text-xs text-gray-400 mt-1 uppercase tracking-widest font-semibold font-mono">Join India's Smart E-Waste Ecosystem</p>
+          <h2 className="text-2xl font-black tracking-tight text-foreground">Create Verified Account</h2>
+          <p className="text-xs text-muted-text mt-1 uppercase tracking-wider font-semibold font-mono">Join India's Smart E-Waste Ecosystem</p>
         </div>
 
-        {/* Glass Box Container */}
-        <div className="glassmorphism rounded-3xl p-8 border border-white/5 shadow-2xl relative">
+        {/* Dynamic Signup Box */}
+        <div className="glassmorphism p-8 border border-card-border bg-card shadow-lg relative">
           
-          {/* Portal Switcher */}
-          <div className="flex bg-slate-950 p-1.5 rounded-2xl border border-white/5 mb-6">
-            <button
-              onClick={() => { setRole("user"); setError(""); }}
-              className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition-all ${
-                role === "user"
-                  ? "bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/10"
-                  : "text-gray-400 hover:text-white"
-              }`}
-            >
-              User Account
-            </button>
-            <button
-              onClick={() => { setRole("recycler"); setError(""); }}
-              className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition-all ${
-                role === "recycler"
-                  ? "bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/10"
-                  : "text-gray-400 hover:text-white"
-              }`}
-            >
-              Business Registration
-            </button>
+          {/* Progress Banner indicator */}
+          <div className="flex justify-between items-center mb-6 border-b border-card-border pb-3 text-xs font-bold text-emerald-500 font-mono">
+            <span>STEP {signupStep} OF 3</span>
+            <div className="flex gap-1.5">
+              {[1, 2, 3].map(s => (
+                <div 
+                  key={s} 
+                  className={`w-4 h-1 rounded-full transition-all ${
+                    s <= signupStep ? "bg-emerald-500" : "bg-card-border"
+                  }`} 
+                />
+              ))}
+            </div>
           </div>
 
           {error && (
-            <div className="bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-semibold px-4 py-3 rounded-xl mb-4 text-center">
+            <div className="bg-red-500/5 border border-red-500/15 text-red-500 text-xs font-semibold px-4 py-3 rounded-xl mb-4 text-center">
               {error}
             </div>
           )}
 
-          {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-4">
-            
-            {role === "user" ? (
-              // USER SIGNUP FIELDS
-              <div className="space-y-4 animate-in fade-in duration-200">
-                <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1">Full Name</label>
-                  <div className="relative">
-                    <User className="absolute left-4 top-3.5 w-4 h-4 text-gray-500" />
-                    <input
-                      type="text"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      placeholder="John Doe"
-                      className="w-full bg-slate-950 border border-white/5 rounded-xl pl-11 pr-4 py-3 text-xs text-white focus:outline-none focus:border-emerald-500/40 placeholder-gray-600"
-                    />
-                  </div>
-                </div>
-              </div>
-            ) : (
-              // RECYCLER / BUSINESS REGISTRATION FIELDS
-              <div className="space-y-4 animate-in fade-in duration-200 grid grid-cols-1 md:grid-cols-2 gap-4">
-                
-                <div className="space-y-1 col-span-1 md:col-span-2">
-                  <h4 className="text-xs font-extrabold text-emerald-400 uppercase tracking-widest mb-1">Company Specifications</h4>
-                </div>
+          {successMsg && !error && (
+            <div className="bg-emerald-500/5 border border-emerald-500/15 text-emerald-600 text-xs font-semibold px-4 py-3 rounded-xl mb-4 text-center">
+              {successMsg}
+            </div>
+          )}
 
-                <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1">Shop/Business Name</label>
-                  <div className="relative">
-                    <Award className="absolute left-4 top-3.5 w-4 h-4 text-gray-500" />
-                    <input
-                      type="text"
-                      value={businessName}
-                      onChange={(e) => setBusinessName(e.target.value)}
-                      placeholder="e.g. GreenTech Recyclers"
-                      className="w-full bg-slate-950 border border-white/5 rounded-xl pl-11 pr-4 py-3 text-xs text-white focus:outline-none focus:border-emerald-500/40 placeholder-gray-600"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1">Owner Full Name</label>
-                  <div className="relative">
-                    <User className="absolute left-4 top-3.5 w-4 h-4 text-gray-500" />
-                    <input
-                      type="text"
-                      value={ownerName}
-                      onChange={(e) => setOwnerName(e.target.value)}
-                      placeholder="Amit Kumar"
-                      className="w-full bg-slate-950 border border-white/5 rounded-xl pl-11 pr-4 py-3 text-xs text-white focus:outline-none focus:border-emerald-500/40 placeholder-gray-600"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1">Contact Number</label>
-                  <div className="relative">
-                    <Phone className="absolute left-4 top-3.5 w-4 h-4 text-gray-500" />
-                    <input
-                      type="text"
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                      placeholder="+91 99999 88888"
-                      className="w-full bg-slate-950 border border-white/5 rounded-xl pl-11 pr-4 py-3 text-xs text-white focus:outline-none focus:border-emerald-500/40 placeholder-gray-600"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1">E-Waste Board License ID</label>
-                  <div className="relative">
-                    <ShieldCheck className="absolute left-4 top-3.5 w-4 h-4 text-gray-500" />
-                    <input
-                      type="text"
-                      value={licenseNumber}
-                      onChange={(e) => setLicenseNumber(e.target.value)}
-                      placeholder="DL-EW-2026-0498"
-                      className="w-full bg-slate-950 border border-white/5 rounded-xl pl-11 pr-4 py-3 text-xs text-white focus:outline-none focus:border-emerald-500/40 placeholder-gray-600"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-1 col-span-1 md:col-span-2">
-                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1">Shop Address</label>
-                  <div className="relative">
-                    <MapPin className="absolute left-4 top-3.5 w-4 h-4 text-gray-500" />
-                    <input
-                      type="text"
-                      value={address}
-                      onChange={(e) => setAddress(e.target.value)}
-                      placeholder="Shop 12, Kirti Nagar Market, New Delhi"
-                      className="w-full bg-slate-950 border border-white/5 rounded-xl pl-11 pr-4 py-3 text-xs text-white focus:outline-none focus:border-emerald-500/40 placeholder-gray-600"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-1 col-span-1 md:col-span-2">
-                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1">Specialties & Operations</label>
-                  <div className="flex flex-wrap gap-2 mt-1.5">
-                    {["Urban Mining", "PCB Shredding", "Lead Extraction", "Appliance Disassembly", "Display Delamination", "Battery Safekeeping"].map(serv => {
-                      const isChecked = services.includes(serv);
-                      return (
-                        <button
-                          key={serv}
-                          type="button"
-                          onClick={() => handleServiceToggle(serv)}
-                          className={`px-3 py-1.5 rounded-lg border text-[10px] font-bold transition-all ${
-                            isChecked
-                              ? "bg-emerald-500/15 border-emerald-500 text-emerald-400"
-                              : "bg-slate-950 border-white/5 text-gray-400 hover:text-white"
-                          }`}
-                        >
-                          {serv}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                <div className="space-y-1 col-span-1 md:col-span-2 border-t border-white/5 pt-4">
-                  <h4 className="text-xs font-extrabold text-emerald-400 uppercase tracking-widest mb-1 font-mono">Authentication credentials</h4>
-                </div>
-              </div>
-            )}
-
-            {/* Common Auth Fields */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* ==========================================
+              STAGE 1: EMAIL ENTRY
+              ========================================== */}
+          {signupStep === 1 && (
+            <form onSubmit={handleSendOtp} className="space-y-4">
               <div className="space-y-1">
-                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1">Email</label>
+                <label className="text-[10px] font-bold text-muted-text uppercase tracking-wider ml-1">Email Address</label>
                 <div className="relative">
-                  <Mail className="absolute left-4 top-3.5 w-4 h-4 text-gray-500" />
+                  <Mail className="absolute left-4 top-3.5 w-4 h-4 text-muted-text" />
                   <input
                     type="email"
+                    required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="name@example.com"
-                    className="w-full bg-slate-950 border border-white/5 rounded-xl pl-11 pr-4 py-3 text-xs text-white focus:outline-none focus:border-emerald-500/40 placeholder-gray-600"
+                    className="w-full bg-background border border-card-border rounded-xl pl-11 pr-4 py-3 text-xs text-foreground focus:outline-none focus:border-emerald-500/40"
+                  />
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full flex items-center justify-center gap-2 py-3 rounded-xl btn-green-gradient font-bold text-xs"
+              >
+                {loading ? (
+                  <RefreshCw className="w-4 h-4 animate-spin" />
+                ) : (
+                  <>
+                    <span>Send Verification Code</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </>
+                )}
+              </button>
+            </form>
+          )}
+
+          {/* ==========================================
+              STAGE 2: OTP VERIFICATION
+              ========================================== */}
+          {signupStep === 2 && (
+            <form onSubmit={handleVerifyOtp} className="space-y-4">
+              
+              {/* Local testing helper banner displaying current Mock OTP code */}
+              {consoleOtp && (
+                <div className="bg-amber-400/5 border border-amber-400/15 text-amber-600 text-[11px] font-medium p-3.5 rounded-xl text-left flex items-start gap-2">
+                  <ShieldCheck className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
+                  <div>
+                    <div className="font-bold">Verification Code Sent!</div>
+                    <p className="mt-0.5">Use OTP code: <span className="font-mono font-bold bg-white px-1.5 py-0.5 rounded border border-amber-500/20 text-xs">{consoleOtp}</span></p>
+                  </div>
+                </div>
+              )}
+
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-muted-text uppercase tracking-wider ml-1">Enter 6-Digit Code</label>
+                <input
+                  type="text"
+                  required
+                  maxLength={6}
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value)}
+                  placeholder="e.g. 123456"
+                  className="w-full bg-background border border-card-border rounded-xl px-4 py-3 text-center text-sm font-black tracking-widest text-foreground focus:outline-none focus:border-emerald-500/40"
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full flex items-center justify-center gap-2 py-3 rounded-xl btn-green-gradient font-bold text-xs"
+              >
+                {loading ? (
+                  <RefreshCw className="w-4 h-4 animate-spin" />
+                ) : (
+                  <>
+                    <span>Verify Code</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </>
+                )}
+              </button>
+
+              <button 
+                type="button" 
+                onClick={() => setSignupStep(1)} 
+                className="text-xs text-muted-text hover:text-foreground font-bold block text-center w-full"
+              >
+                Change Email Address
+              </button>
+            </form>
+          )}
+
+          {/* ==========================================
+              STAGE 3: COLLECT PROFILE INFO
+              ========================================== */}
+          {signupStep === 3 && (
+            <form onSubmit={handleCompleteSignup} className="space-y-3.5">
+              
+              {/* Role Switcher */}
+              <div className="space-y-1">
+                <label className="text-[9px] font-bold text-muted-text uppercase tracking-wider ml-1">Account Role Type</label>
+                <div className="flex bg-muted-border p-1 border border-card-border rounded-xl gap-1">
+                  {(["customer", "recycler", "refurbisher"] as const).map(r => (
+                    <button
+                      key={r}
+                      type="button"
+                      onClick={() => setRole(r)}
+                      className={`flex-1 py-1.5 rounded-lg text-[10px] font-bold uppercase transition-all ${
+                        role === r 
+                          ? "bg-emerald-500 text-white shadow-sm" 
+                          : "text-muted-text hover:text-foreground"
+                      }`}
+                    >
+                      {r}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <label className="text-[9px] font-bold text-muted-text uppercase tracking-wider ml-1">Full Name</label>
+                  <div className="relative">
+                    <User className="absolute left-3 top-2.5 w-3.5 h-3.5 text-muted-text" />
+                    <input
+                      type="text"
+                      required
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      placeholder="John Doe"
+                      className="w-full bg-background border border-card-border rounded-xl pl-9 pr-3 py-2 text-xs text-foreground focus:outline-none focus:border-emerald-500/40"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-[9px] font-bold text-muted-text uppercase tracking-wider ml-1">Age</label>
+                  <div className="relative">
+                    <Calendar className="absolute left-3 top-2.5 w-3.5 h-3.5 text-muted-text" />
+                    <input
+                      type="number"
+                      required
+                      value={age}
+                      onChange={(e) => setAge(e.target.value)}
+                      placeholder="28"
+                      className="w-full bg-background border border-card-border rounded-xl pl-9 pr-3 py-2 text-xs text-foreground focus:outline-none focus:border-emerald-500/40"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-[9px] font-bold text-muted-text uppercase tracking-wider ml-1">Contact Phone</label>
+                <div className="relative">
+                  <Phone className="absolute left-3.5 top-2.5 w-3.5 h-3.5 text-muted-text" />
+                  <input
+                    type="text"
+                    required
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    placeholder="+91 99999 88888"
+                    className="w-full bg-background border border-card-border rounded-xl pl-10 pr-4 py-2 text-xs text-foreground focus:outline-none focus:border-emerald-500/40"
                   />
                 </div>
               </div>
 
               <div className="space-y-1">
-                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1">Password</label>
+                <label className="text-[9px] font-bold text-muted-text uppercase tracking-wider ml-1">Primary Address</label>
                 <div className="relative">
-                  <Lock className="absolute left-4 top-3.5 w-4 h-4 text-gray-500" />
+                  <MapPin className="absolute left-3.5 top-2.5 w-3.5 h-3.5 text-muted-text" />
                   <input
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="••••••••"
-                    className="w-full bg-slate-950 border border-white/5 rounded-xl pl-11 pr-4 py-3 text-xs text-white focus:outline-none focus:border-emerald-500/40 placeholder-gray-600"
+                    type="text"
+                    required
+                    value={address}
+                    onChange={(e) => setAddress(e.target.value)}
+                    placeholder="Sector 63, Noida, Uttar Pradesh"
+                    className="w-full bg-background border border-card-border rounded-xl pl-10 pr-4 py-2 text-xs text-foreground focus:outline-none focus:border-emerald-500/40"
                   />
                 </div>
               </div>
-            </div>
 
-            {/* Submit */}
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold transition-all shadow-lg shadow-emerald-500/15 cursor-pointer text-xs"
-            >
-              {loading ? (
-                <>
+              <div className="space-y-1">
+                <label className="text-[9px] font-bold text-muted-text uppercase tracking-wider ml-1">Choose Password</label>
+                <div className="relative">
+                  <Lock className="absolute left-3.5 top-2.5 w-3.5 h-3.5 text-muted-text" />
+                  <input
+                    type="password"
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••••••"
+                    className="w-full bg-background border border-card-border rounded-xl pl-10 pr-4 py-2 text-xs text-foreground focus:outline-none focus:border-emerald-500/40"
+                  />
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full flex items-center justify-center gap-2 py-3 rounded-xl btn-green-gradient font-bold text-xs"
+              >
+                {loading ? (
                   <RefreshCw className="w-4 h-4 animate-spin" />
-                  <span>Registering...</span>
-                </>
-              ) : (
-                <>
-                  <span>Create Account & Verify</span>
-                  <ArrowRight className="w-4 h-4" />
-                </>
-              )}
-            </button>
+                ) : (
+                  <>
+                    <span>Complete Verification</span>
+                    <CheckCircle2 className="w-4.5 h-4.5" />
+                  </>
+                )}
+              </button>
+            </form>
+          )}
 
-          </form>
-
-          {/* Divider */}
-          <div className="text-center mt-6 text-[11px] text-gray-400">
-            <span>Already have an account? </span>
+          {/* Footer Navigation */}
+          <div className="text-center mt-6 text-[11px] text-muted-text">
+            <span>Already have a verified account? </span>
             <Link 
               href="/auth/login"
-              className="text-emerald-400 font-bold hover:underline"
+              className="text-emerald-500 font-bold hover:underline"
             >
               Log In
             </Link>

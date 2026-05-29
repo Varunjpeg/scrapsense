@@ -1,0 +1,71 @@
+{
+  "users": [
+    {
+      "name": "Varun U",
+      "age": 21,
+      "phone": "9739634569",
+      "address": "varunumashankar.u@gmail.com",
+      "email": "varunumashankar.u@gmail.com",
+      "passwordHash": "b51b2cd793a1a9ee0421fad1cc870df19e6551d639264fb8563f6a6dc6e8402493719a632302108b41a29ae032153142ba7571058c6da17fb0dadf7410a0afa2",
+      "salt": "1b0b3684b79fdd3cfdb6908c50502232",
+      "role": "customer",
+      "id": "usr_3b6de82409e165a3",
+      "rewardPoints": 0,
+      "walletBalance": 0,
+      "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=150&auto=format&fit=crop",
+      "verified": true
+    }
+  ],
+  "otps": [
+    {
+      "email": "dagaxa9301@googxs.com",
+      "otp": "382777",
+      "expiresAt": 1780063347939
+    }
+  ],
+  "bookings": [],
+  "recyclers": [
+    {
+      "id": "rec_1",
+      "businessName": "EcoRecyclers Industrial Hub",
+      "ownerName": "Rajesh Singhal",
+      "email": "contact@ecorecyclers.in",
+      "phone": "+91 98123 45678",
+      "address": "Plot 42, Okhla Industrial Area Phase III, New Delhi",
+      "licenseNumber": "CPCB-EW-2025-9988",
+      "ratings": 4.8,
+      "distance": "1.4 km",
+      "points": 820,
+      "servicesJson": "[\"E-waste Logistics\",\"PCB Shredding\",\"Lead Extraction\",\"Secure Data Deletion\"]",
+      "isRefurbisher": false
+    },
+    {
+      "id": "rec_2",
+      "businessName": "Apex Green Metals",
+      "ownerName": "Sanjay Kumar",
+      "email": "sanjay@apexgreen.in",
+      "phone": "+91 99110 88224",
+      "address": "Block B, Industrial Zone, Sector 63, Noida",
+      "licenseNumber": "UPPCB-EW-2024-0012",
+      "ratings": 4.6,
+      "distance": "4.5 km",
+      "points": 410,
+      "servicesJson": "[\"Urban Mining\",\"PCB Shredding\",\"Battery Safekeeping\"]",
+      "isRefurbisher": false
+    },
+    {
+      "id": "ref_1",
+      "businessName": "Alpha Board Refurbishers",
+      "ownerName": "Dev D'Souza",
+      "email": "dev@alphaboard.in",
+      "phone": "+91 98888 77777",
+      "address": "H-82, CP Outer Circle, Connaught Place, New Delhi",
+      "licenseNumber": "DL-RF-2025-0199",
+      "ratings": 4.9,
+      "distance": "0.8 km",
+      "points": 930,
+      "servicesJson": "[\"Display Delamination\",\"Motherboard Repairs\",\"Battery Upgrades\"]",
+      "isRefurbisher": true
+    }
+  ]
+}

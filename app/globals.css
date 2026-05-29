@@ -20,15 +20,21 @@
   --color-card: var(--card);
   --color-card-border: var(--card-border);
   --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
   --color-accent-foreground: var(--accent-foreground);
   --color-muted-text: var(--muted);
   --color-muted-border: var(--muted-border);
-  
-  --animate-marquee: marquee 45s linear infinite;
+
+  --animate-marquee: marquee 40s linear infinite;
 
   @keyframes marquee {
-    0% { transform: translateX(0%); }
-    100% { transform: translateX(-50%); }
+    0% {
+      transform: translateX(0%);
+    }
+
+    100% {
+      transform: translateX(-50%);
+    }
   }
 }
 
@@ -38,55 +44,65 @@ body {
   font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   overflow-x: hidden;
   letter-spacing: -0.01em;
-  transition: background-color 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease;
+  min-height: 100vh;
 }
 
-/* Linear / Stripe-style Glass Panel */
+/* Zerodha/Cashify-style Crisp White Eco Panel */
 .glassmorphism {
   background-color: var(--card);
   border: 1px solid var(--card-border);
-  border-radius: 12px;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  border-radius: 16px;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .glassmorphism-hover {
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .glassmorphism-hover:hover {
   transform: translateY(-2px);
-  border-color: rgba(16, 185, 129, 0.4);
-  box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.08);
+  border-color: rgba(34, 197, 94, 0.3);
+  box-shadow: var(--shadow-md), 0 0 15px -3px rgba(34, 197, 94, 0.08);
 }
 
-.dark .glassmorphism-hover:hover {
-  box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.5), 0 0 20px -5px rgba(16, 185, 129, 0.08);
-}
-
-/* Subtly repeating engineering grid for minor accent zones */
+/* Engineering eco-grid overlay */
 .eco-grid {
-  background-size: 24px 24px;
-  background-image: 
-    linear-gradient(to right, rgba(16, 185, 129, 0.02) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(16, 185, 129, 0.02) 1px, transparent 1px);
-}
-
-.light .eco-grid {
-  background-image: 
-    linear-gradient(to right, rgba(16, 185, 129, 0.015) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(16, 185, 129, 0.015) 1px, transparent 1px);
+  background-size: 32px 32px;
+  background-image:
+    linear-gradient(to right, rgba(34, 197, 94, 0.018) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(34, 197, 94, 0.018) 1px, transparent 1px);
 }
 
 /* Masking for Marquee to fade edges */
 .mask-marquee {
-  mask-image: linear-gradient(to right, transparent, black 12%, black 88%, transparent);
-  -webkit-mask-image: linear-gradient(to right, transparent, black 12%, black 88%, transparent);
+  mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+}
+
+/* Eco green gradient buttons */
+.btn-green-gradient {
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px -2px rgba(34, 197, 94, 0.2);
+  transition: all 0.2s ease;
+}
+
+.btn-green-gradient:hover {
+  opacity: 0.95;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px -2px rgba(34, 197, 94, 0.3);
+}
+
+.btn-green-gradient:active {
+  transform: translateY(0px);
 }
 
 /* Modern minimal scrollbars */
 ::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -99,5 +115,5 @@ body {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(16, 185, 129, 0.4);
+  background: rgba(34, 197, 94, 0.3);
 }

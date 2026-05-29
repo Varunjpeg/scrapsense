@@ -20,11 +20,11 @@ function StatCard({ label, value, prefix = "", suffix = "", icon: Icon, color }:
     const end = value;
     if (start === end) return;
 
-    const totalDuration = 2000; // 2 seconds
-    const incrementTime = Math.max(Math.floor(totalDuration / end), 15);
+    const totalDuration = 1500;
+    const incrementTime = Math.max(Math.floor(totalDuration / end), 12);
     
     const timer = setInterval(() => {
-      start += Math.ceil(end / 100);
+      start += Math.ceil(end / 80);
       if (start >= end) {
         clearInterval(timer);
         setCount(end);
@@ -37,17 +37,17 @@ function StatCard({ label, value, prefix = "", suffix = "", icon: Icon, color }:
   }, [value]);
 
   return (
-    <div className="glassmorphism glassmorphism-hover rounded-2xl p-6 flex items-start gap-4 flex-1">
-      <div className={`p-3.5 rounded-xl ${color} bg-opacity-10 text-emerald-400 border border-white/5`}>
-        <Icon className="w-6 h-6" />
+    <div className="glassmorphism rounded-2xl p-5.5 flex items-start gap-4 flex-1 bg-card shadow-sm border border-card-border hover:shadow-md transition-shadow">
+      <div className={`p-3.5 rounded-xl ${color} bg-opacity-10 text-emerald-600 border border-emerald-500/10 shrink-0`}>
+        <Icon className="w-5.5 h-5.5" />
       </div>
       <div>
-        <div className="text-2xl font-bold tracking-tight text-white flex items-baseline gap-0.5">
+        <div className="text-xl font-black tracking-tight text-foreground flex items-baseline gap-0.5">
           <span>{prefix}</span>
           <span>{count.toLocaleString()}</span>
-          <span className="text-emerald-400 text-lg font-semibold">{suffix}</span>
+          <span className="text-emerald-500 text-sm font-bold ml-0.5">{suffix}</span>
         </div>
-        <div className="text-sm font-medium text-gray-400 mt-1">{label}</div>
+        <div className="text-xs font-bold text-muted-text mt-0.5 uppercase tracking-wider font-mono">{label}</div>
       </div>
     </div>
   );
@@ -55,27 +55,27 @@ function StatCard({ label, value, prefix = "", suffix = "", icon: Icon, color }:
 
 export default function StatsCounter() {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-5xl px-6 my-10">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-5 w-full max-w-4xl px-4 my-8 text-left">
       <StatCard
-        label="E-Waste Safely Diverted"
+        label="Diverted Landfills"
         value={18340}
         suffix=" kg"
         icon={TreeDeciduous}
         color="bg-emerald-500"
       />
       <StatCard
-        label="Instant Payouts Processed"
+        label="Payouts Cleared"
         value={485600}
         prefix="₹"
         icon={Coins}
-        color="bg-amber-500"
+        color="bg-emerald-500"
       />
       <StatCard
-        label="Certified Partners Online"
+        label="Certified Partners"
         value={45}
         suffix="+"
         icon={ShieldCheck}
-        color="bg-cyan-500"
+        color="bg-emerald-500"
       />
     </div>
   );

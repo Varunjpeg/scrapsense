@@ -34,11 +34,11 @@ export default function ValuationCenter() {
     setCurrentStep("booking");
   };
 
-  const handleBookingSubmit = (e: React.FormEvent) => {
+  const handleBookingSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!valuationData || !pickupAddress || !contactPhone || !selectedPartnerId) return;
 
-    const result = createBooking(
+    const result = await createBooking(
       deviceName,
       valuationData,
       pickupAddress,
