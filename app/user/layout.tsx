@@ -3,7 +3,16 @@
 import React, { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
+
 import {
+  LayoutDashboard, MapPin, Wrench, BadgeDollarSign, User, LogOut, Leaf, Coins, Award
+} from "lucide-react";
+
+import { useApp } from "@/context/AppContext";
+import ChatSupport from "@/components/ChatSupport";
+
+const menuItems = [
+ import {
   LayoutDashboard,
   MapPin,
   Wrench,
@@ -12,38 +21,27 @@ import {
   LogOut,
   Leaf,
   Coins,
-import {
-    LayoutDashboard, MapPin, Wrench, BadgeDollarSign, User, LogOut, Leaf, Coins, Award
-  } from "lucide-react";
-
-import { useApp } from "@/context/AppContext";
-import ChatSupport from "@/components/ChatSupport";
-
-const menuItems = [
-  {
-    label: "Dashboard",
-    href: "/user/dashboard",
-    icon: LayoutDashboard,
-  },
-  {
-    label: "Search Dealers",
+  Award
+} from "lucide-react";
+{
+  label: "Search Dealers",
     href: "/user/dealers",
-    icon: MapPin,
+      icon: MapPin,
   },
-  {
-    label: "Search Refurbishers",
+{
+  label: "Search Refurbishers",
     href: "/user/refurbishers",
-    icon: Wrench,
+      icon: Wrench,
   },
-  {
-    label: "AI Valuation",
+{
+  label: "AI Valuation",
     href: "/user/valuation",
-    icon: BadgeDollarSign,
+      icon: BadgeDollarSign,
   },
-  {
-    label: "Your Profile",
+{
+  label: "Your Profile",
     href: "/user/profile",
-    icon: User,
+      icon: User,
   },
 ];
 
