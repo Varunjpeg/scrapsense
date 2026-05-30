@@ -12,36 +12,26 @@ import { useApp } from "@/context/AppContext";
 import ChatSupport from "@/components/ChatSupport";
 
 const menuItems = [
- import {
-  LayoutDashboard,
-  MapPin,
-  Wrench,
-  BadgeDollarSign,
-  User,
-  LogOut,
-  Leaf,
-  Coins,
-  Award
-} from "lucide-react";
-{
-  label: "Search Dealers",
+
+  {
+    label: "Search Dealers",
     href: "/user/dealers",
-      icon: MapPin,
+    icon: MapPin,
   },
-{
-  label: "Search Refurbishers",
+  {
+    label: "Search Refurbishers",
     href: "/user/refurbishers",
-      icon: Wrench,
+    icon: Wrench,
   },
-{
-  label: "AI Valuation",
+  {
+    label: "AI Valuation",
     href: "/user/valuation",
-      icon: BadgeDollarSign,
+    icon: BadgeDollarSign,
   },
-{
-  label: "Your Profile",
+  {
+    label: "Your Profile",
     href: "/user/profile",
-      icon: User,
+    icon: User,
   },
 ];
 
