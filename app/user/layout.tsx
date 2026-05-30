@@ -3,33 +3,65 @@
 import React, { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
-import { 
-  LayoutDashboard, MapPin, Wrench, BadgeDollarSign, User, LogOut, Sun, Moon, Leaf, Coins, MessageSquareCode
+import {
+  LayoutDashboard,
+  MapPin,
+  Wrench,
+  BadgeDollarSign,
+  User,
+  LogOut,
+  Leaf,
+  Coins,
 } from "lucide-react";
+
 import { useApp } from "@/context/AppContext";
-import { useTheme } from "@/context/ThemeContext";
 import ChatSupport from "@/components/ChatSupport";
 
 const menuItems = [
-  { label: "Dashboard", href: "/user/dashboard", icon: LayoutDashboard },
-  { label: "Search Dealers", href: "/user/dealers", icon: MapPin },
-  { label: "Search Refurbishers", href: "/user/refurbishers", icon: Wrench },
-  { label: "AI Valuation", href: "/user/valuation", icon: BadgeDollarSign },
-  { label: "Your Profile", href: "/user/profile", icon: User },
+  {
+    label: "Dashboard",
+    href: "/user/dashboard",
+    icon: LayoutDashboard,
+  },
+  {
+    label: "Search Dealers",
+    href: "/user/dealers",
+    icon: MapPin,
+  },
+  {
+    label: "Search Refurbishers",
+    href: "/user/refurbishers",
+    icon: Wrench,
+  },
+  {
+    label: "AI Valuation",
+    href: "/user/valuation",
+    icon: BadgeDollarSign,
+  },
+  {
+    label: "Your Profile",
+    href: "/user/profile",
+    icon: User,
+  },
 ];
 
-export default function UserPortalLayout({ children }: { children: React.ReactNode }) {
+export default function UserPortalLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const router = useRouter();
   const pathname = usePathname();
+
   const { user, role, logout } = useApp();
-  const { theme, toggleTheme } = useTheme();
+
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  // Secure client-side redirect if not authenticated
+  // Redirect if not authenticated
   useEffect(() => {
     if (mounted && (!user || role !== "user")) {
       router.push("/auth/login");
@@ -38,10 +70,12 @@ export default function UserPortalLayout({ children }: { children: React.ReactNo
 
   if (!mounted || !user) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background text-foreground">
+      <div className="min-h-screen flex items-center justify-center bg-white">
         <div className="flex flex-col items-center gap-3">
-          <Leaf className="w-8 h-8 text-emerald-400 animate-spin" />
-          <span className="text-xs font-semibold text-gray-400 uppercase tracking-widest font-mono">Authenticating Portal...</span>
+          <Leaf className="w-8 h-8 text-green-500 animate-spin" />
+          <span className="text-xs font-semibold text-gray-500 uppercase tracking-widest">
+            Authenticating Portal...
+          </span>
         </div>
       </div>
     );
@@ -53,40 +87,51 @@ export default function UserPortalLayout({ children }: { children: React.ReactNo
   };
 
   return (
-    <div className="min-h-screen flex flex-col md:flex-row bg-background text-foreground">
-      {/* SIDEBAR NAVIGATION */}
-      <aside className="w-full md:w-64 border-r border-white/5 bg-slate-950/20 backdrop-blur-md flex flex-col justify-between shrink-0 p-4">
+    <div className="min-h-screen flex flex-col md:flex-row bg-gradient-to-br from-green-50 via-white to-emerald-50 text-gray-900">
+      
+      {/* SIDEBAR */}
+      <aside className="w-full md:w-64 border-r border-green-100 bg-white shadow-sm flex flex-col justify-between shrink-0 p-4">
+
         <div className="space-y-8">
-          
-          {/* Logo brand */}
-          <div className="flex items-center gap-2 px-2 mt-2">
-            <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-              <Leaf className="w-4 h-4 animate-pulse" />
+
+          {/* LOGO */}
+          <div className="flex items-center gap-3 px-2 mt-2">
+            <div className="p-2 rounded-xl bg-green-100 text-green-600">
+              <Leaf className="w-5 h-5" />
             </div>
+
             <div>
-              <span className="text-sm font-black tracking-tight text-white">Scrap<span className="text-emerald-400">Sense</span></span>
-              <span className="text-[8px] bg-emerald-500/10 text-emerald-400 font-extrabold px-1.5 py-0.5 rounded-full uppercase tracking-wider ml-1 border border-emerald-500/20">
-                User
+              <span className="text-lg font-black tracking-tight text-gray-900">
+                Scrap<span className="text-green-600">Sense</span>
               </span>
+
+              <div className="mt-1">
+                <span className="text-[10px] bg-green-100 text-green-700 font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+                  User Portal
+                </span>
+              </div>
             </div>
           </div>
 
-          {/* Navigation Links */}
-          <nav className="space-y-1.5">
-            {menuItems.map(item => {
+          {/* NAVIGATION */}
+          <nav className="space-y-2">
+            {menuItems.map((item) => {
               const Icon = item.icon;
+
               const isActive = pathname === item.href;
+
               return (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold transition-all ${
+                  className={`flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-semibold transition-all duration-200 ${
                     isActive
-                      ? "bg-emerald-500 text-slate-950 shadow-lg shadow-emerald-500/10"
-                      : "text-gray-400 hover:text-white hover:bg-white/5"
+                      ? "bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-lg"
+                      : "text-gray-600 hover:bg-green-50 hover:text-green-700"
                   }`}
                 >
-                  <Icon className="w-4.5 h-4.5 shrink-0" />
+                  <Icon className="w-5 h-5 shrink-0" />
+
                   <span>{item.label}</span>
                 </Link>
               );
@@ -94,77 +139,80 @@ export default function UserPortalLayout({ children }: { children: React.ReactNo
           </nav>
         </div>
 
-        {/* Sidebar Footer */}
-        <div className="space-y-4 pt-4 border-t border-white/5">
-          {/* Theme switcher */}
-          <button
-            onClick={toggleTheme}
-            className="w-full flex items-center justify-between px-4 py-2.5 rounded-xl border border-white/5 hover:border-white/10 text-xs font-bold text-gray-400 hover:text-white transition-all bg-white/5"
-          >
-            <div className="flex items-center gap-2.5">
-              {theme === "dark" ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-emerald-400" />}
-              <span>{theme === "dark" ? "Light Mode" : "Dark Mode"}</span>
-            </div>
-          </button>
+        {/* FOOTER */}
+        <div className="space-y-4 pt-4 border-t border-green-100">
 
-          {/* Logout */}
+          {/* LOGOUT */}
           <button
             onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-bold text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors cursor-pointer"
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-semibold text-red-500 hover:bg-red-50 transition-all"
           >
-            <LogOut className="w-4.5 h-4.5" />
+            <LogOut className="w-5 h-5" />
+
             <span>Log Out</span>
           </button>
         </div>
       </aside>
 
-      {/* PRIMARY VIEWER PORT */}
+      {/* MAIN CONTENT */}
       <div className="flex-1 flex flex-col min-w-0">
-        
-        {/* Header Panel */}
-        <header className="border-b border-white/5 bg-slate-950/20 backdrop-blur-md px-6 py-4 flex items-center justify-between">
-          <div className="text-sm font-black text-white leading-tight">
-            User Workspace
+
+        {/* HEADER */}
+        <header className="border-b border-green-100 bg-white/80 backdrop-blur-md px-6 py-4 flex items-center justify-between shadow-sm">
+
+          <div>
+            <h1 className="text-lg font-black text-gray-900">
+              User Workspace
+            </h1>
+
+            <p className="text-xs text-gray-500 mt-1">
+              India’s smartest AI-powered e-waste ecosystem
+            </p>
           </div>
-          
+
           <div className="flex items-center gap-4">
-            
-            {/* Wallet pill */}
-            <div className="flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 px-3.5 py-1.5 rounded-full shadow-inner select-none">
-              <Coins className="w-4 h-4 text-emerald-400" />
-              <span className="text-xs font-extrabold text-emerald-400">
-                ₹{user.walletBalance.toLocaleString()}
+
+            {/* WALLET */}
+            <div className="flex items-center gap-2 bg-green-100 px-4 py-2 rounded-full">
+              <Coins className="w-4 h-4 text-green-600" />
+
+              <span className="text-sm font-bold text-green-700">
+                ₹{user.walletBalance?.toLocaleString?.() || 0}
               </span>
             </div>
 
-            {/* Reward Points Badge */}
-            <div className="flex items-center gap-1.5 bg-amber-400/10 border border-amber-400/20 px-3 py-1.5 rounded-full shadow-inner select-none">
-              <span className="text-[10px] font-black text-amber-400 uppercase tracking-widest">
-                {user.rewardPoints} PTS
+            {/* REWARD POINTS */}
+            <div className="bg-amber-100 px-4 py-2 rounded-full">
+              <span className="text-xs font-bold text-amber-700">
+                {user.rewardPoints || 0} PTS
               </span>
             </div>
 
-            {/* Profile Avatar */}
-            <Link href="/user/profile" className="flex items-center gap-2 border-l border-white/10 pl-4 group">
+            {/* PROFILE */}
+            <Link
+              href="/user/profile"
+              className="flex items-center gap-3 border-l border-green-100 pl-4 group"
+            >
               <img
-                src={user.avatar}
+                src={user.avatar || "/default-avatar.png"}
                 alt="Profile"
-                className="w-8 h-8 rounded-full border border-white/10 group-hover:border-emerald-400 transition-colors"
+                className="w-10 h-10 rounded-full border-2 border-green-200 object-cover group-hover:border-green-500 transition-all"
               />
-              <span className="hidden sm:inline text-xs font-bold text-gray-300 group-hover:text-white transition-colors">
+
+              <span className="hidden sm:inline text-sm font-semibold text-gray-700 group-hover:text-green-700 transition-all">
                 {user.name}
               </span>
             </Link>
           </div>
         </header>
 
-        {/* Dashboard Pages wrapper */}
-        <main className="flex-1 p-6 overflow-y-auto relative z-10">
+        {/* PAGE CONTENT */}
+        <main className="flex-1 p-6 overflow-y-auto">
           {children}
         </main>
       </div>
 
-      {/* Persistent Floating Chat Overlay */}
+      {/* CHAT SUPPORT */}
       <ChatSupport />
     </div>
   );
