@@ -36,33 +36,103 @@ const DEVICE_CATEGORIES = [
 ];
 
 const CATEGORIZED_SUGGESTIONS: SuggestionItem[] = [
-  // Laptops
-  { name: "Apple MacBook Pro M1", category: "Laptops", icon: Laptop },
-  { name: "Apple MacBook Air M2", category: "Laptops", icon: Laptop },
-  { name: "Dell XPS 15", category: "Laptops", icon: Laptop },
-  { name: "Lenovo ThinkPad X1 Carbon", category: "Laptops", icon: Laptop },
-  { name: "HP Spectre x360", category: "Laptops", icon: Laptop },
   // Smartphones
   { name: "Apple iPhone 15 Pro Max", category: "Smartphones", icon: Smartphone },
+  { name: "Apple iPhone 15 Pro", category: "Smartphones", icon: Smartphone },
+  { name: "Apple iPhone 14 Pro", category: "Smartphones", icon: Smartphone },
   { name: "Samsung Galaxy S24 Ultra", category: "Smartphones", icon: Smartphone },
+  { name: "Samsung Galaxy S23 Ultra", category: "Smartphones", icon: Smartphone },
   { name: "OnePlus 12", category: "Smartphones", icon: Smartphone },
+  { name: "OnePlus 11", category: "Smartphones", icon: Smartphone },
   { name: "Google Pixel 8 Pro", category: "Smartphones", icon: Smartphone },
-  // Consoles
-  { name: "Sony PlayStation 5", category: "Gaming Consoles", icon: Gamepad2 },
-  { name: "Microsoft Xbox Series X", category: "Gaming Consoles", icon: Gamepad2 },
-  { name: "Nintendo Switch OLED", category: "Gaming Consoles", icon: Gamepad2 },
+  { name: "Xiaomi 14 Ultra", category: "Smartphones", icon: Smartphone },
+  { name: "Realme GT 6", category: "Smartphones", icon: Smartphone },
+
+  // Laptops
+  { name: "Apple MacBook Pro M1", category: "Laptops", icon: Laptop },
+  { name: "Apple MacBook Pro M2", category: "Laptops", icon: Laptop },
+  { name: "Apple MacBook Air M2", category: "Laptops", icon: Laptop },
+  { name: "Dell XPS 15", category: "Laptops", icon: Laptop },
+  { name: "Dell Inspiron 15", category: "Laptops", icon: Laptop },
+  { name: "HP Pavilion 15", category: "Laptops", icon: Laptop },
+  { name: "HP Spectre x360", category: "Laptops", icon: Laptop },
+  { name: "Lenovo ThinkPad X1 Carbon", category: "Laptops", icon: Laptop },
+  { name: "Lenovo Legion 5", category: "Laptops", icon: Laptop },
+  { name: "ASUS ROG Zephyrus G14", category: "Laptops", icon: Laptop },
+
   // PC Components
-  { name: "NVIDIA GeForce RTX 4090", category: "PC Components", icon: Layers },
-  { name: "Intel Core i9-14900K", category: "PC Components", icon: Layers },
-  { name: "Corsair Vengeance 32GB DDR5", category: "PC Components", icon: Layers },
-  { name: "ASUS ROG Motherboard Z790", category: "PC Components", icon: Layers },
-  // Networking Devices
-  { name: "TP-Link Archer AX55 Router", category: "Networking Devices", icon: Cpu },
-  { name: "Netgear Nighthawk RAX50", category: "Networking Devices", icon: Cpu },
-  { name: "Cisco Catalyst 2960", category: "Networking Devices", icon: Cpu },
-  // Household Electronics
-  { name: "Sony Bravia Smart TV 55\"", category: "Household Electronics", icon: Tv },
-  { name: "Dyson V15 Vacuum Cleaner", category: "Household Electronics", icon: Tv }
+  { name: "NVIDIA RTX 4090", category: "PC Components", icon: Layers },
+  { name: "NVIDIA RTX 4080", category: "PC Components", icon: Layers },
+  { name: "NVIDIA RTX 4070", category: "PC Components", icon: Layers },
+  { name: "AMD Radeon RX 7900 XTX", category: "PC Components", icon: Layers },
+  { name: "Intel Core i9 14900K", category: "PC Components", icon: Layers },
+  { name: "Intel Core i7 14700K", category: "PC Components", icon: Layers },
+  { name: "AMD Ryzen 9 7950X", category: "PC Components", icon: Layers },
+  { name: "ASUS Z790 Motherboard", category: "PC Components", icon: Layers },
+  { name: "Gigabyte B650 Motherboard", category: "PC Components", icon: Layers },
+  { name: "Corsair DDR5 RAM", category: "PC Components", icon: Layers },
+
+  // TVs
+  { name: "Sony Bravia 55 Smart TV", category: "TVs & Monitors", icon: Tv },
+  { name: "Samsung QLED Smart TV", category: "TVs & Monitors", icon: Tv },
+  { name: "LG OLED TV", category: "TVs & Monitors", icon: Tv },
+  { name: "Dell 27 Monitor", category: "TVs & Monitors", icon: Tv },
+  { name: "LG Ultrawide Monitor", category: "TVs & Monitors", icon: Tv },
+
+  // Gaming
+  { name: "Sony PlayStation 5", category: "Gaming Consoles", icon: Gamepad2 },
+  { name: "Sony PlayStation 4", category: "Gaming Consoles", icon: Gamepad2 },
+  { name: "Xbox Series X", category: "Gaming Consoles", icon: Gamepad2 },
+  { name: "Xbox Series S", category: "Gaming Consoles", icon: Gamepad2 },
+  { name: "Nintendo Switch OLED", category: "Gaming Consoles", icon: Gamepad2 },
+
+  // Networking
+  { name: "TP Link Archer AX55 Router", category: "Networking Devices", icon: Cpu },
+  { name: "Netgear Nighthawk Router", category: "Networking Devices", icon: Cpu },
+  { name: "Cisco Catalyst Switch", category: "Networking Devices", icon: Cpu },
+  { name: "D Link WiFi Router", category: "Networking Devices", icon: Cpu },
+
+  // Wearables
+  { name: "Apple Watch Series 9", category: "Wearables", icon: Smartphone },
+  { name: "Samsung Galaxy Watch 6", category: "Wearables", icon: Smartphone },
+  { name: "Fitbit Versa 4", category: "Wearables", icon: Smartphone },
+
+  // Audio
+  { name: "Apple AirPods Pro", category: "Audio Devices", icon: Smartphone },
+  { name: "Sony WH1000XM5", category: "Audio Devices", icon: Smartphone },
+  { name: "JBL Flip 6 Speaker", category: "Audio Devices", icon: Smartphone },
+
+  // Automotive Electronics
+  { name: "Car ECU Module", category: "Automotive Electronics", icon: Cpu },
+  { name: "ABS Control Module", category: "Automotive Electronics", icon: Cpu },
+  { name: "Car Infotainment System", category: "Automotive Electronics", icon: Cpu },
+  { name: "Instrument Cluster", category: "Automotive Electronics", icon: Cpu },
+  { name: "Vehicle GPS Unit", category: "Automotive Electronics", icon: Cpu },
+
+  // Fitness Electronics
+  { name: "Treadmill Control Board", category: "Fitness Electronics", icon: Cpu },
+  { name: "Exercise Bike Console", category: "Fitness Electronics", icon: Cpu },
+  { name: "Elliptical Control Panel", category: "Fitness Electronics", icon: Cpu },
+
+  // Printers
+  { name: "HP LaserJet Printer", category: "Printers & Office Electronics", icon: Cpu },
+  { name: "Canon Pixma Printer", category: "Printers & Office Electronics", icon: Cpu },
+  { name: "Epson EcoTank Printer", category: "Printers & Office Electronics", icon: Cpu },
+
+  // Smart Home
+  { name: "Amazon Echo", category: "Smart Home & Appliances", icon: Cpu },
+  { name: "Google Nest Hub", category: "Smart Home & Appliances", icon: Cpu },
+  { name: "Smart Door Lock", category: "Smart Home & Appliances", icon: Cpu },
+
+  // E-Waste / PCB Items
+  { name: "Motherboard PCB", category: "PC Components", icon: Layers },
+  { name: "Laptop PCB", category: "PC Components", icon: Layers },
+  { name: "Mobile Phone PCB", category: "PC Components", icon: Layers },
+  { name: "Router PCB", category: "PC Components", icon: Layers },
+  { name: "Television PCB", category: "PC Components", icon: Layers },
+  { name: "Industrial Control PCB", category: "PC Components", icon: Layers },
+  { name: "Server Motherboard", category: "PC Components", icon: Layers },
+  { name: "Graphics Card PCB", category: "PC Components", icon: Layers }
 ];
 
 export default function DeviceValuationForm({ onSuccess }: DeviceValuationFormProps) {
