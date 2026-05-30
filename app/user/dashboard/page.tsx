@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { 
+import {
   ArrowRight, ShieldCheck, Cpu, MapPin, Wrench, BadgeDollarSign, User, Sparkles, Award, Navigation
 } from "lucide-react";
 import { useApp } from "@/context/AppContext";
@@ -50,7 +50,7 @@ export default function UserDashboard() {
 
   return (
     <div className="space-y-6.5 max-w-5xl mx-auto">
-      
+
       {/* Stripe-style Profile Hero Banner */}
       <div className="glassmorphism rounded-xl p-5.5 border border-card-border bg-card relative overflow-hidden flex flex-col sm:flex-row justify-between items-center gap-5 shadow-sm">
         <div className="absolute inset-0 eco-grid pointer-events-none opacity-20" />
@@ -134,11 +134,10 @@ export default function UserDashboard() {
                   <p className="text-[10px] text-muted-text mt-0.5">Dealer: {b.recyclerName} | Slot: {b.timeSlot}</p>
                 </div>
 
-                <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded text-[8px] font-bold uppercase border ${
-                  b.status === "pending" 
-                    ? "bg-muted-border border-card-border text-muted-text" 
-                    : "bg-emerald-500/10 border-emerald-500/20 text-emerald-500 animate-pulse"
-                }`}>
+                <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded text-[8px] font-bold uppercase border ${b.status === "pending"
+                  ? "bg-muted-border border-card-border text-muted-text"
+                  : "bg-emerald-500/10 border-emerald-500/20 text-emerald-500 animate-pulse"
+                  }`}>
                   {b.status === "pending" ? "Awaiting pickup" : b.status === "accepted" ? "Booking Confirmed" : "Agent dispatched"}
                 </span>
               </div>
@@ -176,7 +175,7 @@ export default function UserDashboard() {
               </div>
 
               <div className="flex flex-wrap gap-1 mt-3.5">
-                {dealer.services.slice(0, 2).map((serv, i) => (
+                {(dealer.services || []).slice(0, 2).map((serv, i) => (
                   <span key={i} className="text-[8px] bg-background border border-card-border text-muted-text px-2 py-0.5 rounded font-medium">
                     {serv}
                   </span>

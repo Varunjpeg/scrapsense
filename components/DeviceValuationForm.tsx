@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { 
-  ArrowRight, ArrowLeft, RefreshCw, Cpu, Award, Zap, AlertTriangle, Compass, CheckCircle, 
+import {
+  ArrowRight, ArrowLeft, RefreshCw, Cpu, Award, Zap, AlertTriangle, Compass, CheckCircle,
   Search, Keyboard, Laptop, Smartphone, Gamepad2, Layers, Tv, History
 } from "lucide-react";
 import { useApp, DeviceValuation } from "@/context/AppContext";
@@ -16,6 +16,24 @@ interface SuggestionItem {
   category: string;
   icon: any;
 }
+
+const DEVICE_CATEGORIES = [
+  { name: "Smartphones", icon: "📱" },
+  { name: "Laptops", icon: "💻" },
+  { name: "PC Components", icon: "🖥️" },
+  { name: "TVs & Monitors", icon: "📺" },
+  { name: "Gaming Consoles", icon: "🎮" },
+  { name: "Networking Devices", icon: "📡" },
+  { name: "Audio Devices", icon: "🎧" },
+  { name: "Batteries & Power Banks", icon: "🔋" },
+  { name: "Chargers & Adapters", icon: "🔌" },
+  { name: "Wearables", icon: "⌚" },
+  { name: "Automotive Electronics", icon: "🚗" },
+  { name: "Fitness Electronics", icon: "🏋️" },
+  { name: "Printers & Office Electronics", icon: "🖨️" },
+  { name: "Smart Home & Appliances", icon: "🏠" },
+  { name: "Other", icon: "❓" },
+];
 
 const CATEGORIZED_SUGGESTIONS: SuggestionItem[] = [
   // Laptops
@@ -38,6 +56,10 @@ const CATEGORIZED_SUGGESTIONS: SuggestionItem[] = [
   { name: "Intel Core i9-14900K", category: "PC Components", icon: Layers },
   { name: "Corsair Vengeance 32GB DDR5", category: "PC Components", icon: Layers },
   { name: "ASUS ROG Motherboard Z790", category: "PC Components", icon: Layers },
+  // Networking Devices
+  { name: "TP-Link Archer AX55 Router", category: "Networking Devices", icon: Cpu },
+  { name: "Netgear Nighthawk RAX50", category: "Networking Devices", icon: Cpu },
+  { name: "Cisco Catalyst 2960", category: "Networking Devices", icon: Cpu },
   // Household Electronics
   { name: "Sony Bravia Smart TV 55\"", category: "Household Electronics", icon: Tv },
   { name: "Dyson V15 Vacuum Cleaner", category: "Household Electronics", icon: Tv }
@@ -58,6 +80,8 @@ export default function DeviceValuationForm({ onSuccess }: DeviceValuationFormPr
 
   // Search & Autocomplete
   const [query, setQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [deviceType, setDeviceType] = useState("");
   const [filteredSuggestions, setFilteredSuggestions] = useState<SuggestionItem[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
@@ -126,12 +150,12 @@ export default function DeviceValuationForm({ onSuccess }: DeviceValuationFormPr
 
     if (e.key === "ArrowDown") {
       e.preventDefault();
-      setHighlightedIndex(prev => 
+      setHighlightedIndex(prev =>
         prev < filteredSuggestions.length - 1 ? prev + 1 : 0
       );
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
-      setHighlightedIndex(prev => 
+      setHighlightedIndex(prev =>
         prev > 0 ? prev - 1 : filteredSuggestions.length - 1
       );
     } else if (e.key === "Enter") {
@@ -154,12 +178,18 @@ export default function DeviceValuationForm({ onSuccess }: DeviceValuationFormPr
 
   const handleNext = () => {
     if (step === 1 && !deviceName.trim()) return;
+
     if (step === 1) {
       saveRecentSearch(deviceName);
     }
+
+    if (deviceType === "PC Components" && step === 3) {
+      setStep(5);
+      return;
+    }
+
     setStep(prev => prev + 1);
   };
-
   const handlePrev = () => {
     setStep(prev => prev - 1);
   };
@@ -208,9 +238,8 @@ export default function DeviceValuationForm({ onSuccess }: DeviceValuationFormPr
             {[1, 2, 3, 4, 5, 6].map(i => (
               <div
                 key={i}
-                className={`w-4 h-1 rounded-full transition-all duration-300 ${
-                  i <= step ? "bg-emerald-500" : "bg-card-border"
-                }`}
+                className={`w-4 h-1 rounded-full transition-all duration-300 ${i <= step ? "bg-emerald-500" : "bg-card-border"
+                  }`}
               />
             ))}
           </div>
@@ -224,49 +253,75 @@ export default function DeviceValuationForm({ onSuccess }: DeviceValuationFormPr
             <h3 className="text-base font-bold text-foreground">Select device model</h3>
             <p className="text-[11px] text-muted-text">Type your model or select from standard options below.</p>
           </div>
+          <div className="space-y-2 mb-4">
+            <span className="text-[10px] font-bold text-muted-text uppercase tracking-wider">
+              Select Device Category
+            </span>
 
-          <div className="relative" ref={dropdownRef}>
-            <div className="relative">
-              <Search className="absolute left-3.5 top-3.5 w-4.5 h-4.5 text-muted-text" />
-              <input
-                ref={inputRef}
-                type="text"
-                value={query}
-                onChange={handleInputChange}
-                onKeyDown={handleKeyDown}
-                onFocus={() => query.trim().length > 0 && setShowDropdown(true)}
-                placeholder="e.g. MacBook Pro M1, iPhone 15 Pro..."
-                className="w-full bg-background border border-card-border rounded-xl pl-11 pr-4 py-3 text-xs text-foreground focus:outline-none focus:border-emerald-500/50 shadow-inner"
-              />
+            <div className="grid grid-cols-3 gap-3">
+              {DEVICE_CATEGORIES.map((cat) => (
+                <button
+                  key={cat.name}
+                  onClick={() => {
+                    setSelectedCategory(cat.name);
+                    setDeviceType(cat.name);
+                  }}
+                  className={`p-3 rounded-xl border transition-all ${selectedCategory === cat.name
+                    ? "bg-emerald-500 text-slate-950 border-emerald-500"
+                    : "bg-background border-card-border hover:border-emerald-500/30"
+                    }`}
+                >
+                  <div className="text-lg">{cat.icon}</div>
+                  <div className="text-[10px] font-semibold mt-1">
+                    {cat.name}
+                  </div>
+                </button>
+              ))}
             </div>
-
-            {/* Auto-complete suggestions dropdown */}
-            {showDropdown && filteredSuggestions.length > 0 && (
-              <div className="absolute top-full left-0 right-0 mt-1 bg-card border border-card-border rounded-xl shadow-xl z-30 max-h-60 overflow-y-auto p-1.5 space-y-1">
-                {filteredSuggestions.map((item, index) => {
-                  const SugIcon = item.icon;
-                  const isHighlighted = highlightedIndex === index;
-                  return (
-                    <button
-                      key={index}
-                      onClick={() => selectSuggestion(item.name)}
-                      className={`w-full text-left flex items-center justify-between px-3.5 py-2.5 rounded-lg text-xs font-medium transition-all ${
-                        isHighlighted 
-                          ? "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20" 
-                          : "text-foreground hover:bg-muted-border border border-transparent"
-                      }`}
-                    >
-                      <div className="flex items-center gap-2.5">
-                        <SugIcon className="w-4 h-4 text-muted-text shrink-0" />
-                        <span>{item.name}</span>
-                      </div>
-                      <span className="text-[9px] font-bold text-muted-text uppercase font-mono">{item.category}</span>
-                    </button>
-                  );
-                })}
-              </div>
-            )}
           </div>
+          {selectedCategory !== "All" && (
+            <div className="relative" ref={dropdownRef}>
+              <div className="relative">
+                <Search className="absolute left-3.5 top-3.5 w-4.5 h-4.5 text-muted-text" />
+                <input
+                  ref={inputRef}
+                  type="text"
+                  value={query}
+                  onChange={handleInputChange}
+                  onKeyDown={handleKeyDown}
+                  onFocus={() => query.trim().length > 0 && setShowDropdown(true)}
+                  placeholder="e.g. MacBook Pro M1, iPhone 15 Pro..."
+                  className="w-full bg-background border border-card-border rounded-xl pl-11 pr-4 py-3 text-xs text-foreground focus:outline-none focus:border-emerald-500/50 shadow-inner"
+                />
+              </div>
+
+              {/* Auto-complete suggestions dropdown */}
+              {showDropdown && filteredSuggestions.length > 0 && (
+                <div className="absolute top-full left-0 right-0 mt-1 bg-card border border-card-border rounded-xl shadow-xl z-30 max-h-60 overflow-y-auto p-1.5 space-y-1">
+                  {filteredSuggestions.map((item, index) => {
+                    const SugIcon = item.icon;
+                    const isHighlighted = highlightedIndex === index;
+                    return (
+                      <button
+                        key={index}
+                        onClick={() => selectSuggestion(item.name)}
+                        className={`w-full text-left flex items-center justify-between px-3.5 py-2.5 rounded-lg text-xs font-medium transition-all ${isHighlighted
+                          ? "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20"
+                          : "text-foreground hover:bg-muted-border border border-transparent"
+                          }`}
+                      >
+                        <div className="flex items-center gap-2.5">
+                          <SugIcon className="w-4 h-4 text-muted-text shrink-0" />
+                          <span>{item.name}</span>
+                        </div>
+                        <span className="text-[9px] font-bold text-muted-text uppercase font-mono">{item.category}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Recent Searches */}
           {recentSearches.length > 0 && (
@@ -339,11 +394,10 @@ export default function DeviceValuationForm({ onSuccess }: DeviceValuationFormPr
               <button
                 key={opt}
                 onClick={() => { setAge(opt); handleNext(); }}
-                className={`py-3.5 px-4 rounded-xl border text-xs font-bold text-center transition-all ${
-                  age === opt
-                    ? "bg-emerald-500 border-emerald-500 text-slate-950"
-                    : "bg-background border-card-border text-foreground hover:bg-muted-border"
-                }`}
+                className={`py-3.5 px-4 rounded-xl border text-xs font-bold text-center transition-all ${age === opt
+                  ? "bg-emerald-500 border-emerald-500 text-slate-950"
+                  : "bg-background border-card-border text-foreground hover:bg-muted-border"
+                  }`}
               >
                 {opt}
               </button>
@@ -365,22 +419,20 @@ export default function DeviceValuationForm({ onSuccess }: DeviceValuationFormPr
           <div className="grid grid-cols-2 gap-4">
             <button
               onClick={() => { setIsFunctional(true); handleNext(); }}
-              className={`py-5 px-4 rounded-2xl border text-xs font-bold transition-all flex flex-col items-center gap-2 ${
-                isFunctional
-                  ? "bg-emerald-500 border-emerald-500 text-slate-950"
-                  : "bg-background border-card-border text-foreground hover:bg-muted-border"
-              }`}
+              className={`py-5 px-4 rounded-2xl border text-xs font-bold transition-all flex flex-col items-center gap-2 ${isFunctional
+                ? "bg-emerald-500 border-emerald-500 text-slate-950"
+                : "bg-background border-card-border text-foreground hover:bg-muted-border"
+                }`}
             >
               <Zap className="w-5 h-5" />
               <span>Powers on fully</span>
             </button>
             <button
               onClick={() => { setIsFunctional(false); handleNext(); }}
-              className={`py-5 px-4 rounded-2xl border text-xs font-bold transition-all flex flex-col items-center gap-2 ${
-                !isFunctional
-                  ? "bg-emerald-500 border-emerald-500 text-slate-950"
-                  : "bg-background border-card-border text-foreground hover:bg-muted-border"
-              }`}
+              className={`py-5 px-4 rounded-2xl border text-xs font-bold transition-all flex flex-col items-center gap-2 ${!isFunctional
+                ? "bg-emerald-500 border-emerald-500 text-slate-950"
+                : "bg-background border-card-border text-foreground hover:bg-muted-border"
+                }`}
             >
               <AlertTriangle className="w-5 h-5" />
               <span>Dead / Faulty motherboard</span>
@@ -393,7 +445,7 @@ export default function DeviceValuationForm({ onSuccess }: DeviceValuationFormPr
       )}
 
       {/* STEP 4: Screen */}
-      {step === 4 && (
+      {step === 4 && deviceType !== "PC Components" && (
         <div className="relative z-10 space-y-5">
           <div className="space-y-1">
             <h3 className="text-base font-bold text-foreground">Screen Display glass</h3>
@@ -404,11 +456,10 @@ export default function DeviceValuationForm({ onSuccess }: DeviceValuationFormPr
               <button
                 key={opt}
                 onClick={() => { setScreenCondition(opt); handleNext(); }}
-                className={`py-3.5 px-3 rounded-xl border text-xs font-bold transition-all ${
-                  screenCondition === opt
-                    ? "bg-emerald-500 border-emerald-500 text-slate-950"
-                    : "bg-background border-card-border text-foreground hover:bg-muted-border"
-                }`}
+                className={`py-3.5 px-3 rounded-xl border text-xs font-bold transition-all ${screenCondition === opt
+                  ? "bg-emerald-500 border-emerald-500 text-slate-950"
+                  : "bg-background border-card-border text-foreground hover:bg-muted-border"
+                  }`}
               >
                 {opt}
               </button>
@@ -424,19 +475,21 @@ export default function DeviceValuationForm({ onSuccess }: DeviceValuationFormPr
       {step === 5 && (
         <div className="relative z-10 space-y-5">
           <div className="space-y-1">
-            <h3 className="text-base font-bold text-foreground">Chassis Physical Body</h3>
-            <p className="text-[11px] text-muted-text font-medium">Bents or motherboard casing damages drop coefficients.</p>
+            <h3 className="text-base font-bold text-foreground">
+              {deviceType === "PC Components"
+                ? "PCB / Component Condition"
+                : "Chassis Physical Body"}
+            </h3>            <p className="text-[11px] text-muted-text font-medium">Bents or motherboard casing damages drop coefficients.</p>
           </div>
           <div className="grid grid-cols-3 gap-3">
             {["Flawless", "Good", "Damaged"].map(opt => (
               <button
                 key={opt}
                 onClick={() => { setPhysicalCondition(opt); handleNext(); }}
-                className={`py-3.5 px-3 rounded-xl border text-xs font-bold transition-all ${
-                  physicalCondition === opt
-                    ? "bg-emerald-500 border-emerald-500 text-slate-950"
-                    : "bg-background border-card-border text-foreground hover:bg-muted-border"
-                }`}
+                className={`py-3.5 px-3 rounded-xl border text-xs font-bold transition-all ${physicalCondition === opt
+                  ? "bg-emerald-500 border-emerald-500 text-slate-950"
+                  : "bg-background border-card-border text-foreground hover:bg-muted-border"
+                  }`}
               >
                 {opt}
               </button>
@@ -456,22 +509,24 @@ export default function DeviceValuationForm({ onSuccess }: DeviceValuationFormPr
             <p className="text-[11px] text-muted-text">Original cables slightly increase secondary retail value.</p>
           </div>
           <div className="grid grid-cols-2 gap-3">
-            {["Original Box", "OEM Charger", "Earphones", "Purchase Bill"].map(opt => {
+            {(
+              deviceType === "PC Components"
+                ? ["Original Box", "Warranty Card", "Anti-static Packaging", "Purchase Bill"]
+                : ["Original Box", "OEM Charger", "Earphones", "Purchase Bill"]
+            ).map(opt => {
               const isChecked = accessories.includes(opt);
               return (
                 <button
                   key={opt}
                   onClick={() => toggleAccessory(opt)}
-                  className={`py-3.5 px-4 rounded-xl border text-xs font-bold flex items-center justify-between transition-all ${
-                    isChecked
-                      ? "bg-emerald-500/10 border-emerald-500 text-emerald-500"
-                      : "bg-background border-card-border text-foreground hover:bg-muted-border"
-                  }`}
+                  className={`py-3.5 px-4 rounded-xl border text-xs font-bold flex items-center justify-between transition-all ${isChecked
+                    ? "bg-emerald-500/10 border-emerald-500 text-emerald-500"
+                    : "bg-background border-card-border text-foreground hover:bg-muted-border"
+                    }`}
                 >
                   <span>{opt}</span>
-                  <div className={`w-4 h-4 rounded border flex items-center justify-center ${
-                    isChecked ? "bg-emerald-500 border-emerald-500 text-slate-950" : "border-gray-400"
-                  }`}>
+                  <div className={`w-4 h-4 rounded border flex items-center justify-center ${isChecked ? "bg-emerald-500 border-emerald-500 text-slate-950" : "border-gray-400"
+                    }`}>
                     {isChecked && <span>✓</span>}
                   </div>
                 </button>
@@ -511,11 +566,10 @@ export default function DeviceValuationForm({ onSuccess }: DeviceValuationFormPr
       {step === 7 && result && (
         <div className="relative z-10 space-y-6 animate-in fade-in duration-300">
           <div className="text-center pb-4 border-b border-card-border">
-            <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded text-[9px] font-extrabold uppercase border ${
-              result.canBeRefurbished
-                ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-500"
-                : "bg-amber-500/10 border-amber-500/20 text-amber-500"
-            }`}>
+            <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded text-[9px] font-extrabold uppercase border ${result.canBeRefurbished
+              ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-500"
+              : "bg-amber-500/10 border-amber-500/20 text-amber-500"
+              }`}>
               {result.canBeRefurbished ? "Highly Refurbishable" : "Best For Material Scrap"}
             </span>
             <h3 className="text-xl font-black text-foreground mt-2 leading-none">{result.deviceName}</h3>
@@ -531,7 +585,7 @@ export default function DeviceValuationForm({ onSuccess }: DeviceValuationFormPr
               </div>
               <p className="text-[10px] text-muted-text mt-1">Value if repaired and chips cleaned.</p>
             </div>
-            
+
             <div className="border border-card-border bg-background p-4 rounded-xl">
               <span className="text-[10px] text-muted-text font-bold uppercase tracking-wider">Direct Scrap Worth</span>
               <div className={`text-xl font-extrabold mt-1.5 ${!result.canBeRefurbished ? "text-amber-500" : "text-muted-text"}`}>
